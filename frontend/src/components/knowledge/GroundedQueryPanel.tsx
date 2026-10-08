@@ -72,7 +72,7 @@ export function GroundedQueryPanel({ uploadId, formal = false }: { uploadId: str
     try {
       const state = await readIngestionProgress(uploadId);
       if (request !== generation.current) return;
-      if (state.status !== 'ready') throw new Error(zh ? '文档尚未就绪或已隔离，不能查询。' : 'Document is not ready or has been quarantined.');
+      if (state.status !== 'ready') throw new Error(zh ? '文档未处理完成或检查未通过，不能提问。' : 'Document processing is incomplete or checks did not pass.');
       const additional = options.filter(item => selected.includes(item.uploadId));
       if (additional.length !== selected.length) throw new Error('Report selection changed; refresh the list.');
       const states = await Promise.all(additional.map(item => readIngestionProgress(item.uploadId)));
@@ -99,17 +99,17 @@ export function GroundedQueryPanel({ uploadId, formal = false }: { uploadId: str
   }
 
   return <section className="grounded-query" aria-labelledby="grounded-query-title">
-    <h3 id="grounded-query-title">{formal ? (zh ? '已就绪财报查询' : 'Ready filing query') : (zh ? '已验证财报查询（试点）' : 'Verified filing query (pilot)')}</h3>
-    <p>{zh ? '当前支持明确的财务指标与年度查询；不会回退到普通聊天。' : 'Currently supports precise metric and annual-period queries; no ordinary-chat fallback.'}</p>
+    <h3 id="grounded-query-title">{formal ? (zh ? '财报提问' : 'Ask About Report') : (zh ? '财报提问（试点）' : 'Ask About Report (Pilot)')}</h3>
+    <p>{zh ? '请写明指标和年份；仅依据所选财报。' : 'Specify the metric and year. Answers use selected reports only.'}</p>
     {!formal && <fieldset disabled={busy} className="grounded-query__reports">
-      <legend>{zh ? '关联报告（最多再选 4 份）' : 'Related reports (up to 4 additional)'}</legend>
-      <p>{zh ? '当前报告已选。跨文档回答需服务器启用多报告评测链路。' : 'Current report is included. Cross-document answers require the server multi-report pilot.'}</p>
+      <legend>{zh ? '关联财报（最多再选 4 份）' : 'Additional Reports (up to 4)'}</legend>
+      <p>{zh ? '当前财报已选；关联提问需后台启用。' : 'Current report included. Multi-report answers require the server pilot.'}</p>
       <button type="button" disabled={listBusy} onClick={() => setRefresh(value => value + 1)}>
-        {zh ? '刷新报告列表' : 'Refresh reports'}
+        {zh ? '刷新列表' : 'Refresh Reports'}
       </button>
-      {listBusy && <p role="status">{zh ? '正在核实报告状态…' : 'Checking report readiness…'}</p>}
+      {listBusy && <p role="status">{zh ? '正在检查财报状态…' : 'Checking report availability…'}</p>}
       {listError && <p role="alert">{listError}</p>}
-      {!listBusy && !listError && options.length === 0 && <p>{zh ? '暂无其他已就绪报告。' : 'No other ready reports.'}</p>}
+      {!listBusy && !listError && options.length === 0 && <p>{zh ? '暂无其他可用财报。' : 'No other reports are available.'}</p>}
       {options.map(item => <label key={item.documentId} className="grounded-query__report">
         <input type="checkbox" checked={selected.includes(item.uploadId)}
           disabled={listBusy || (!selected.includes(item.uploadId) && selected.length >= 4)}
@@ -121,15 +121,15 @@ export function GroundedQueryPanel({ uploadId, formal = false }: { uploadId: str
         <small>{zh ? '已就绪' : 'Ready'}</small>
       </label>)}
       {nextOffset !== null && <button type="button" disabled={listBusy} onClick={() => void moreReports()}>
-        {zh ? '加载更多报告' : 'Load more reports'}
+        {zh ? '更多财报' : 'More Reports'}
       </button>}
     </fieldset>}
     <form onSubmit={(event) => { event.preventDefault(); void ask(); }}>
-      <label htmlFor="grounded-query-question">{zh ? '财报问题' : 'Filing question'}</label>
+      <label htmlFor="grounded-query-question">{zh ? '输入问题' : 'Your Question'}</label>
       <textarea id="grounded-query-question" value={question} maxLength={4000} required
         disabled={busy} onChange={(event) => setQuestion(event.target.value)} />
       <button type="submit" className="upload-panel__button" disabled={busy || listBusy || !question.trim()}>
-        {busy ? (zh ? '正在核验并回答…' : 'Verifying and answering…') : (zh ? '查询' : 'Ask')}
+        {busy ? (zh ? '正在核对并回答…' : 'Checking sources and answering…') : (zh ? '提问' : 'Ask')}
       </button>
     </form>
     {error && <p role="alert">{error}</p>}

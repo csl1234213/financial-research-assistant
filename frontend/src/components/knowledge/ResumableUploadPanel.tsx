@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { processingStageLabel } from '../../i18n/processingCopy';
 import { createResumableUpload } from '../../api/resumableUpload';
 import { verifyRecoverySelection } from '../../api/resumableUploadContract';
 import { createTusSession, readTusSession, verifyTusSession, finalizeTusSession, readIngestionProgress } from '../../api/uploadSessions';
@@ -55,7 +56,7 @@ export function ResumableUploadPanel({ tenantId, userId, onDocumentStateChange }
     function recover(id: string, status: string) {
       setUploadId(id);
       if (status === 'FINALIZED') setIngestionId(id);
-      else setMessage(zh ? '已恢复上传记录，请重新选择原 PDF 继续。' : 'Upload record restored; reselect the original PDF to continue.');
+      else setMessage(zh ? '已恢复记录，请选原 PDF 继续上传。' : 'Upload restored. Select the original PDF to continue.');
     }
     return () => { cancelled = true; };
   }, [recoveryKey, zh]);
@@ -78,12 +79,12 @@ export function ResumableUploadPanel({ tenantId, userId, onDocumentStateChange }
         notifyDocumentState(ingestionId, `${state.status}:${state.stage}`);
         if (state.status === 'ready') {
           setReadyJob(ingestionId);
-          setMessage(zh ? '文档入库完成，可查询。' : 'Document is ready for queries.'); return;
+          setMessage(zh ? '文档处理完成，可以提问。' : 'Processing complete. You can now ask questions.'); return;
         }
         if (state.status === 'failed' || state.status === 'quarantined') {
-          setError(true); setMessage(zh ? '入库失败或已隔离，不能查询。' : 'Ingestion failed or was quarantined; queries are blocked.'); return;
+          setError(true); setMessage(zh ? '处理失败或检查未通过，不能提问。' : 'Processing failed or checks did not pass. Questions are blocked.'); return;
         }
-        setMessage(`${zh ? '入库处理中' : 'Ingestion in progress'}: ${state.stage} (${state.completedStages.length}/5)`);
+        setMessage(`${zh ? '处理中' : 'Processing'}: ${processingStageLabel(state.stage, language)} (${state.completedStages.length}/5)`);
       } catch (failure: unknown) {
         clearTimeout(requestTimeout);
         if (cancelled) return;
@@ -91,7 +92,7 @@ export function ResumableUploadPanel({ tenantId, userId, onDocumentStateChange }
       }
       attempts += 1;
       if (attempts < 60) timer = setTimeout(poll, 2000);
-      else setMessage(zh ? '仍在处理；点击检查入库状态继续查看。' : 'Still processing; check ingestion status again.');
+      else setMessage(zh ? '仍在处理，请点“查看进度”。' : 'Still processing. Select Check Progress to update.');
     };
     void poll();
     return () => { cancelled = true; clearTimeout(timer); clearTimeout(requestTimeout); request?.abort(); };
@@ -131,11 +132,11 @@ export function ResumableUploadPanel({ tenantId, userId, onDocumentStateChange }
         if (!result || result.failed?.length || !result.successful?.length) throw new Error('Upload did not complete');
       }
       if (session.status !== 'FINALIZED') {
-        setMessage(zh ? '正在核验文件并登记入库任务…' : 'Verifying file and registering ingestion…');
+        setMessage(zh ? '正在检查文件并安排处理…' : 'Checking the file and queuing processing…');
         await verifyTusSession(session.uploadId);
         await finalizeTusSession(session.uploadId);
       }
-      setMessage(zh ? '已登记入库任务，尚不代表文档可查询。' : 'Ingestion registered; the document is not yet query-ready.');
+      setMessage(zh ? '已安排处理，完成检查后才能提问。' : 'Processing queued. The document is not ready for questions yet.');
       notifyDocumentState(session.uploadId, 'registered');
       setIngestionId(session.uploadId);
     } catch (failure: unknown) {
@@ -145,29 +146,29 @@ export function ResumableUploadPanel({ tenantId, userId, onDocumentStateChange }
   }
 
   return <section className="upload-panel" aria-labelledby="resumable-title">
-    <h2 id="resumable-title" className="upload-panel__title">{zh ? '可恢复 PDF 上传（试点）' : 'Resumable PDF upload (pilot)'}</h2>
-    <p>{zh ? '刷新后自动恢复当前用户的上传记录；续传时需重新选择原文件。' : 'After refresh, restore this user’s upload record; reselect the original file to resume.'}</p>
-    <label htmlFor="resume-upload-id">{zh ? '上传 ID（新上传留空）' : 'Upload ID (blank for new upload)'}</label>
+    <h2 id="resumable-title" className="upload-panel__title">{zh ? '断点上传（试点）' : 'Resume Upload (Pilot)'}</h2>
+    <p>{zh ? '刷新后恢复上传记录；续传请选原文件。' : 'After refresh, reselect the original file to resume your upload.'}</p>
+    <label htmlFor="resume-upload-id">{zh ? '上传编号（新上传留空）' : 'Upload Reference (blank for new upload)'}</label>
     <input id="resume-upload-id" value={uploadId} onChange={(event) => {
       recoveryRequest.current += 1; setUploadId(event.target.value); setReadyJob(null); setIngestionId(null);
     }} disabled={busy} autoComplete="off" />
-    <label htmlFor="resume-upload-file">{zh ? '选择 PDF' : 'Select PDF'}</label>
+    <label htmlFor="resume-upload-file">{zh ? '选择文件' : 'Choose PDF'}</label>
     <input id="resume-upload-file" type="file" accept=".pdf" disabled={busy} onChange={(event) => {
       const file = event.target.files?.[0]; event.target.value = ''; if (file) void run(file);
     }} />
-    <progress value={progress} max={1} aria-label={zh ? '文件传输进度' : 'File transfer progress'} />
+    <progress value={progress} max={1} aria-label={zh ? '上传进度' : 'Upload Progress'} />
     <button type="button" disabled={busy} onClick={() => {
       recoveryRequest.current += 1;
       try { window.localStorage.removeItem(recoveryKey); } catch { /* Storage can be unavailable. */ }
       controller.current?.destroy(); controller.current = null;
       setUploadId(''); setIngestionId(null); setReadyJob(null); setMessage(''); setError(false); setProgress(0);
-    }}>{zh ? '开始新上传' : 'Start new upload'}</button>
+    }}>{zh ? '新建上传' : 'New Upload'}</button>
     <button type="button" className="upload-panel__button" disabled={busy || !uploadId}
       onClick={() => { setError(false); setReadyJob(null); setIngestionId(null); void readTusSession(uploadId.trim()).then((value) => {
-        if (value.status !== 'FINALIZED') throw new Error(zh ? '尚未登记入库任务。' : 'Ingestion is not registered.');
+        if (value.status !== 'FINALIZED') throw new Error(zh ? '尚未安排文档处理。' : 'Document processing has not been queued.');
         setIngestionId(value.uploadId);
       }).catch((failure: unknown) => { setError(true); setMessage(failure instanceof Error ? failure.message : 'Progress unavailable'); }); }}>
-      {zh ? '检查入库状态' : 'Check ingestion status'}
+      {zh ? '查看进度' : 'Check Progress'}
     </button>
     {message && <p role={error ? 'alert' : 'status'} className={error ? 'upload-panel__error' : ''}>{message}</p>}
     {readyJob && import.meta.env.VITE_GROUNDED_ANSWER_PILOT === 'true'

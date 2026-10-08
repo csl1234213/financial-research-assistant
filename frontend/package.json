@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "test": "node --test --experimental-strip-types tests/chat-contract.test.ts tests/settings-contract.test.ts tests/knowledge-contract.test.ts tests/chat-scroll.test.ts tests/auth-contract.test.ts tests/health-contract.test.ts tests/document-retrieval-contract.test.ts tests/resumable-upload-contract.test.ts",
+    "test": "node --test --experimental-strip-types tests/chat-contract.test.ts tests/settings-contract.test.ts tests/knowledge-contract.test.ts tests/chat-scroll.test.ts tests/auth-contract.test.ts tests/health-contract.test.ts tests/document-retrieval-contract.test.ts tests/resumable-upload-contract.test.ts tests/copy-contract.test.ts",
     "preview": "vite preview"
   },
   "dependencies": {

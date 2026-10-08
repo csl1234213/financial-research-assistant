@@ -2,79 +2,120 @@
 
 **English** | [简体中文](README_CN.md)
 
-Financial RAG V1 is an evidence-grounded financial-document research system built with Python/FastAPI, React, PostgreSQL, Redis workers and ChromaDB. It supports PDF ingestion, structured financial questions and cited narrative research.
+**Read financial reports. Find the numbers. Check the source.**
 
-## What it addresses
+Upload a report, ask a question, and follow the answer back to the original page. Financial Research Assistant combines structured financial data with document search, so figures and explanations keep their context.
 
-Financial reports are more than text chunks. A number can be misread when its period, unit, reporting scope or table column is lost. A relevant passage can describe a controlling shareholder rather than the listed issuer. This project preserves those relationships and rejects unsupported claims instead of treating retrieval similarity as proof.
+## What you can do
 
-- **Structured FACT retrieval:** reconstructed statement rows are mapped conservatively to canonical metrics. Facts retain entity, period, scope, value, currency, unit and source provenance. Structural verification and semantic mapping remain separate.
-- **Hybrid retrieval:** BM25 and embeddings are fused with reciprocal rank fusion (RRF), with source-bound evidence handed to the grounded answer path.
-- **Evidence and citations:** document identity, page and evidence references accompany claims. Original-source PDF access remains subject to ownership checks.
-- **Subject attribution guard:** issuer evidence and controlling-shareholder/group evidence are distinguished. A group passage cannot silently support an issuer claim.
-- **Durable ingestion:** parsing, quality checking, fact building, tree-artifact building and indexing use persisted stage state, leases and recovery. Dispatch obligations close when tasks become terminal; duplicate delivery is handled idempotently.
-- **Provider boundary:** local or external providers are configurable. Generation success is separate from optional token usage. Provider access is opt-in; capability and timeout limitations are explicit.
-- **Grounded SSE delivery:** validated answers can be delivered in response segments. This is not native model-token streaming.
+| Task | What it does |
+| --- | --- |
+| Upload reports | Save PDFs and follow processing progress. |
+| Find financial data | Retrieve supported metrics with their year, unit and reporting scope. |
+| Ask questions | Get evidence-grounded explanations from your reports. |
+| Check sources | Follow citations to the supporting passages and PDF pages. |
+| Search documents | Find relevant passages without generating an answer. |
+| Choose an AI service | Configure an approved local or external model. |
 
-## Architecture
+Uploading a file does not make it ready for questions. Formal reports must complete all five processing checks first. Search match scores are not answer-accuracy scores.
+
+## Why it exists
+
+Financial-report research has a few recurring traps:
+
+- **The right number, the wrong context.** Table columns, periods, units and consolidated versus parent-company figures must stay attached to the data.
+- **The right report, the wrong company.** A controlling shareholder's business is not automatically the listed company's business. Subject-attribution checks preserve this distinction.
+- **An answer without a trail.** Claims need supporting evidence, not just similar text. Document identity, pages and citations remain traceable.
+- **An upload that stops halfway.** Persisted task state, recovery and idempotent dispatch make processing observable and recoverable.
+
+These are system safeguards, not a promise that every report or question can be answered.
+
+## How it works
+
+Built with React, Python/FastAPI, PostgreSQL, Redis workers and ChromaDB.
 
 ```mermaid
 flowchart TD
-    UI[React UI / authenticated API] --> U[PDF upload and durable task registration]
-    U --> W[Redis / Worker and PostgreSQL stage ledger]
-    W --> P[Parse and quality checks]
-    P --> F[Financial rows / metric registry / facts]
-    P --> I[Source-bound text and index projection]
-    F --> DB[(PostgreSQL)]
-    I --> V[(ChromaDB persistent volume /data)]
-    UI --> Q[Grounded query routing]
-    Q --> S[Structured FACT retrieval]
-    Q --> H[BM25 + embeddings + RRF]
-    DB --> S
-    V --> H
-    S --> E[Evidence / provenance / subject binding]
+    U[Upload PDF] --> W[Redis Worker: read, check, organize, index]
+    W --> F[Verified rows and canonical financial facts]
+    W --> T[Source-bound document passages]
+    F --> P[(PostgreSQL)]
+    T --> C[(ChromaDB volume at /data)]
+    Q[Ask a question] --> R[Query routing]
+    R --> S[Structured FACT retrieval]
+    R --> H[BM25 + embeddings + RRF]
+    P --> S
+    C --> H
+    S --> E[Evidence and subject checks]
     H --> E
-    E --> A[Planner / generation / review / verification]
-    A --> C[Citations and JSON / post-validation SSE]
+    E --> A[Plan, generate, review and verify]
+    A --> O[Answer with citations]
 ```
 
-Tree artifacts and experimental retrieval components exist in the source, but this release does not claim universal Tree-retrieval quality or universal PDF coverage.
+**Structured FACT path:** financial rows map conservatively to canonical metrics. Facts retain entity, period, scope, value, currency, unit and provenance. Structural verification is separate from semantic mapping; ambiguous labels remain unmapped. Cash-and-bank balances are not silently treated as cash and cash equivalents.
 
-## V1 delivery evidence
+**Hybrid search:** BM25 keyword search and embeddings are combined with reciprocal rank fusion (RRF). Retrieved passages still need source and subject checks before supporting an answer.
 
-The validated application base is `ce0b9c64890c81519be7e06df46847adc2043bd7`. Production application/PostgreSQL alignment, migration to Alembic head `20261002_10`, controlled ingestion Canary, and Chroma persistent-volume migration were accepted.
+**Reliable processing:** parsing, quality checks, fact building, tree-artifact building and indexing retain stage state, leases and recovery. Dispatch obligations close when tasks become terminal; duplicate deliveries are handled idempotently.
 
-Chroma persistence was verified by **removing and replacing the new container**, mounting the same named volume at `/data`, and recovering all **3,675 records and vectors** with metadata/document/vector digest equality. Original-source access, Hybrid retrieval and subject attribution checks were replayed after replacement. This is not merely a same-container restart test.
+**AI-service boundary:** provider, model and endpoint are configurable. Missing token-usage data does not turn a valid generation into a failure. Validated answers can be sent in segments over SSE; this is not native model-token streaming.
 
-> [!IMPORTANT]
-> Short-term production observation passed. No long-term SLA, availability percentage, long-term production stability or general accuracy improvement is claimed. Subject-attribution acceptance included deterministic generation/review over real persisted evidence; it is not a new live-model quality benchmark.
+Tree artifacts and experimental retrieval components exist in the source. V1 does not claim universal Tree-retrieval quality.
 
-This public repository starts with clean history. Publication sanitization replaces one retired JWT literal with an equivalent SHA256 rejection check; it does not change the production deployment or erase the old repository's history. No credentials, production snapshots or private operator configuration are distributed.
+## Start with Docker
 
-## Docker deployment
+For a **fresh installation**:
 
-Use [docker-compose.yml](docker-compose.yml) for a **fresh installation**, not an automatic in-place production migration.
+```bash
+git clone https://github.com/csl1234213/financial-research-assistant.git
+cd financial-research-assistant
+cp .env.example .env
+# Set unique, strong authentication, PostgreSQL and Redis secrets in .env.
+docker compose config --quiet
+docker compose up -d --build
+```
 
-1. Copy `.env.example` to your private `.env` and supply unique, strong authentication, PostgreSQL and Redis secrets. Never commit the populated file.
-2. Review ports, explicitly named volumes and workspace/access configuration. Do not reuse existing production volume names without an approved migration plan.
-3. Run `docker compose config --quiet`, then `docker compose up -d --build`.
-4. Check readiness and Worker health before allowing uploads. Chroma's persistent volume must mount at `/data`.
+On PowerShell, use `Copy-Item .env.example .env`. Once services are healthy, open [localhost:3000](http://localhost:3000), sign in, upload a report and wait for processing to finish.
 
-Backend migration startup and Worker migration policy are defined in Compose. For an existing database, take a verified backup, review the migration lineage and use a controlled maintenance/canary procedure rather than blindly upgrading.
+Before starting:
 
-External model calls are disabled by default (`ALLOW_REAL_PROVIDER=false`). Configure approved provider credentials privately and enable calls explicitly when needed. The accepted production deployment used privately bound operator overlays; these files and their secret values are intentionally not shipped.
+- Keep populated environment files and API keys private. Never commit them.
+- Review ports, named volumes and user/workspace access. A shared workspace is not a private per-account document library.
+- External model calls are disabled by default: `ALLOW_REAL_PROVIDER=false`. Enabling them can send report content to the configured service and incur charges.
+- Backend migration startup and Worker migration policy are defined in [Compose](docker-compose.yml). Existing databases need verified backups and a reviewed migration plan.
 
 > [!WARNING]
-> Preserve the entire active Chroma persistence directory before replacing a legacy container whose `/data` is in its writable layer. Mounting an empty volume over `/data` is not a migration. Do not run destructive volume cleanup commands as part of an upgrade.
+> These commands are not an in-place production upgrade. Preserve the entire active Chroma persistence directory before replacing a legacy container. Mounting an empty volume at `/data` is not a migration. Do not reuse production volumes or run destructive cleanup without an approved plan.
 
-## Access and validation boundaries
+## V1 delivery checks
 
-Users are authenticated with JWT; formal documents, facts, vectors and tasks are checked against user/workspace identity. Accounts sharing a workspace do not automatically imply a private per-account knowledge base. Deployment account/workspace policy must be reviewed for the intended use.
+The validated application base is `ce0b9c64890c81519be7e06df46847adc2043bd7`. Application/PostgreSQL alignment, migration to Alembic head `20261002_10`, controlled ingestion Canary and Chroma persistent-volume migration were accepted.
 
-Standard-statement normalization has real-report regressions, but coverage varies by issuer, layout, notes, language and accounting convention. Ambiguous metrics remain unmapped. Chinese cash-and-bank balances are not silently equated with cash and cash equivalents.
+Chroma persistence was verified by **removing and replacing the container**, reusing its named volume at `/data`, and recovering all **3,675 records and vectors** with matching metadata, document and vector digests. Source access, Hybrid retrieval and subject-attribution checks were replayed after replacement.
+
+See [release acceptance results](docs/releases/public-release-acceptance.md) for test scope and skipped checks. Subject-attribution acceptance used deterministic generation/review over real persisted evidence; it is not a new live-model quality benchmark.
+
+## Know the limits
+
+Report coverage varies by layout, issuer, language, notes and accounting convention. Unsupported or ambiguous evidence must not be presented as verified data. Check important figures against the original report.
+
+JWT authentication and user/workspace checks apply to documents, facts, vectors and tasks. Review workspace policy for your intended deployment. Local models require separate hardware, latency and capability qualification.
+
+Short-term production observation passed. **No long-term SLA, availability percentage, long-term stability or unsupported accuracy metric is claimed.**
+
+This public repository has clean history. It contains no production backups, private operator configuration or credentials. Publication sanitization rejects a retired JWT value by its SHA256 digest without publishing the original literal.
 
 ## Development checks
 
-Install the project's dependencies in an isolated environment. Release checks include JWT/security tests, dispatch recovery, formal ingestion, subject attribution, grounded narrative delivery, deployment contracts, Ruff and Compose validation. Real-provider tests require separate authorization and are not needed for offline release checks.
+```bash
+cd frontend
+npm ci
+npm test
+npm run build
+```
 
-See [external full-report acceptance setup](docs/releases/external-fixture.md), [V1 release notes](docs/releases/v1.0.0.md) and [public-source security boundary](docs/releases/public-source-boundary.md).
+Backend release checks cover security, dispatch recovery, ingestion, attribution, grounded answers and deployment contracts. Install dependencies in an isolated environment and run the documented test scope, Ruff and Compose validation. Real-provider calls require separate authorization.
+
+- [External full-report fixture setup](docs/releases/external-fixture.md)
+- [V1 release notes](docs/releases/v1.0.0.md)
+- [Public-source security boundary](docs/releases/public-source-boundary.md)
