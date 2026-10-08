@@ -1,0 +1,37 @@
+{
+  "BASE": "ac968d5b29f7b2c95ff343d2f90fe3dbca9e0264",
+  "SCOPE": "RC1 Phase 1C-A selected-node evidence materialization and coverage only",
+  "FILES": [
+    "retrieval/adaptive_contract.py",
+    "retrieval/tree_materialization.py",
+    "retrieval/tree_shadow.py",
+    "tests/test_tree_materialization_baseline.py",
+    "tests/test_tree_materialization_closure.py",
+    "docs/rc1/phase-1c-tree-retrieval-closure-20261002.md",
+    "docs/rc1/phase-1ca-commit-manifest-20261002.json"
+  ],
+  "HUNK_OWNERSHIP": {
+    "retrieval/adaptive_contract.py": "Backward-compatible required_aspects field and validation only",
+    "retrieval/tree_shadow.py": "Materialization helper wiring, coverage, necessary provenance/trace only",
+    "retrieval/tree_materialization.py": "Self-contained local selected-source allocation and conservative coverage",
+    "tests/test_tree_materialization_baseline.py": "Retained source artifact and sealed baseline diagnostics",
+    "tests/test_tree_materialization_closure.py": "Deterministic closure, negative, identity and compatibility tests"
+  },
+  "EXCLUDED_PREEXISTING_HUNKS": [
+    "retrieval/tree_shadow.py NarrativeAdmission import and provenance merge"
+  ],
+  "EXCLUDED_DEPENDENCIES": [
+    "retrieval/ready_tree_decision.py",
+    "retrieval/ingestion_ready_tree.py",
+    "historical mixed BM25 tokenizer enhancement",
+    "historical ingestion, Provider, Answer, Tree build and Hybrid changes"
+  ],
+  "VALIDATION": {
+    "CANDIDATE": "D:/financial-rag-test-temp/rc1-1ca-candidate",
+    "UNIQUE_PASSED": 300,
+    "FAILED": 0,
+    "SKIPPED": 0,
+    "PROVIDER_CALLS": 0,
+    "SELF_CONTAINED": true
+  }
+}

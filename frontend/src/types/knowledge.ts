@@ -1,0 +1,143 @@
+import type { KnowledgeDocument, DocumentDetail, DocumentChunk } from './api';
+
+export type {
+  DocumentStatus,
+  KnowledgeDocument,
+  DocumentDetail,
+  DocumentChunk,
+} from './api';
+
+export const MOCK_DOCUMENTS: KnowledgeDocument[] = [
+  {
+    id: 'doc-1',
+    filename: 'Tesla_Q2_2025.pdf',
+    company: 'Tesla',
+    pages: 42,
+    status: 'indexed',
+    uploadedAt: '2025-07-15T10:30:00Z',
+    size: '2.4 MB',
+  },
+  {
+    id: 'doc-2',
+    filename: 'Tesla_Q3_2025.pdf',
+    company: 'Tesla',
+    pages: 38,
+    status: 'indexed',
+    uploadedAt: '2025-07-16T14:20:00Z',
+    size: '1.8 MB',
+  },
+  {
+    id: 'doc-3',
+    filename: 'NVIDIA_Report.pdf',
+    company: 'NVIDIA',
+    pages: 120,
+    status: 'indexed',
+    uploadedAt: '2025-07-14T09:15:00Z',
+    size: '5.1 MB',
+  },
+  {
+    id: 'doc-4',
+    filename: 'Apple_Annual_2025.pdf',
+    company: 'Apple',
+    pages: 96,
+    status: 'processing',
+    uploadedAt: '2025-07-17T11:00:00Z',
+    size: '3.2 MB',
+  },
+  {
+    id: 'doc-5',
+    filename: 'Microsoft_10K.pdf',
+    company: 'Microsoft',
+    pages: 88,
+    status: 'failed',
+    uploadedAt: '2025-07-17T08:45:00Z',
+    size: '4.0 MB',
+  },
+];
+
+export const MOCK_DOCUMENT_DETAILS: Record<string, DocumentDetail> = {
+  'doc-1': {
+    id: 'doc-1',
+    filename: 'Tesla_Q2_2025.pdf',
+    company: 'Tesla',
+    pages: 42,
+    status: 'indexed',
+    uploadedAt: '2025-07-15T10:30:00Z',
+    size: '2.4 MB',
+    chunkCount: 84,
+    embeddingStatus: 'completed',
+    vectorStatus: 'stored',
+    fileSize: '2.4 MB',
+    createdAt: '2025-07-15T10:30:00Z',
+    updatedAt: '2025-07-15T10:35:00Z',
+  },
+  'doc-2': {
+    id: 'doc-2',
+    filename: 'Tesla_Q3_2025.pdf',
+    company: 'Tesla',
+    pages: 38,
+    status: 'indexed',
+    uploadedAt: '2025-07-16T14:20:00Z',
+    size: '1.8 MB',
+    chunkCount: 72,
+    embeddingStatus: 'completed',
+    vectorStatus: 'stored',
+    fileSize: '1.8 MB',
+    createdAt: '2025-07-16T14:20:00Z',
+    updatedAt: '2025-07-16T14:25:00Z',
+  },
+  'doc-3': {
+    id: 'doc-3',
+    filename: 'NVIDIA_Report.pdf',
+    company: 'NVIDIA',
+    pages: 120,
+    status: 'indexed',
+    uploadedAt: '2025-07-14T09:15:00Z',
+    size: '5.1 MB',
+    chunkCount: 240,
+    embeddingStatus: 'completed',
+    vectorStatus: 'stored',
+    fileSize: '5.1 MB',
+    createdAt: '2025-07-14T09:15:00Z',
+    updatedAt: '2025-07-14T09:20:00Z',
+  },
+};
+
+export const MOCK_CHUNKS: DocumentChunk[] = [
+  {
+    index: 0,
+    content: 'Tesla, Inc. reported record quarterly revenue of $24.93 billion in Q2 2025, representing a 47% increase year-over-year. The company delivered 466,140 vehicles globally during the quarter.',
+    metadata: { page: '1', section: 'Executive Summary', source: 'Tesla_Q2_2025.pdf' },
+    score: 0.95,
+  },
+  {
+    index: 1,
+    content: 'Automotive gross margin reached 18.2% in Q2, up from 16.3% in the previous quarter. The improvement was driven by cost reductions in raw materials and manufacturing efficiencies.',
+    metadata: { page: '3', section: 'Financial Highlights', source: 'Tesla_Q2_2025.pdf' },
+    score: 0.92,
+  },
+  {
+    index: 2,
+    content: 'Energy generation and storage revenue grew 74% YoY to $4.2 billion. Megapack deployments reached a record 9.4 GWh during the quarter.',
+    metadata: { page: '7', section: 'Energy Business', source: 'Tesla_Q2_2025.pdf' },
+    score: 0.88,
+  },
+  {
+    index: 3,
+    content: 'R&D expenses totaled $1.1 billion in Q2, reflecting continued investment in Full Self-Driving (FSD) technology and the Optimus humanoid robot program.',
+    metadata: { page: '12', section: 'R&D and Innovation', source: 'Tesla_Q2_2025.pdf' },
+    score: 0.85,
+  },
+  {
+    index: 4,
+    content: 'Free cash flow was $2.3 billion, with cash and cash equivalents of $28.5 billion at quarter end. The company maintains a strong liquidity position.',
+    metadata: { page: '15', section: 'Cash Flow', source: 'Tesla_Q2_2025.pdf' },
+    score: 0.81,
+  },
+  {
+    index: 5,
+    content: 'Cybertruck production continued to ramp, with annualized production rate exceeding 250,000 units by the end of Q2 2025.',
+    metadata: { page: '8', section: 'Product Updates', source: 'Tesla_Q2_2025.pdf' },
+    score: 0.78,
+  },
+];

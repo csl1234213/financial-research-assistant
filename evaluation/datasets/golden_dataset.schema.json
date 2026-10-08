@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Financial Agent Golden Evaluation Dataset",
+  "type": "object",
+  "required": ["schema_version", "dataset_id", "cases"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "description": {"type": "string"},
+    "metadata": {"type": "object"},
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "question"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "question": {"type": "string", "minLength": 1},
+          "expected_tools": {"type": "array", "items": {"type": "string"}},
+          "expected_sources": {"type": "array", "items": {"type": "string"}},
+          "expected_retrieval_ids": {"type": "array", "items": {"type": "string"}},
+          "expected_intent": {"type": "string"},
+          "expected_companies": {"type": "array", "items": {"type": "string"}},
+          "expected_task_type": {"type": "string"},
+          "expected_workflow": {"type": "string"},
+          "expected_strategy": {"type": "string"},
+          "expected_use_retrieval": {"type": "boolean"},
+          "expected_use_tools": {"type": "boolean"},
+          "reference_answer": {"type": "string"},
+          "reference_claims": {"type": "array", "items": {"type": "string"}},
+          "criteria": {"type": "array", "items": {"type": "string"}},
+          "metadata": {"type": "object"}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

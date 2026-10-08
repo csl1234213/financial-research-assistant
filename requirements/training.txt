@@ -1,0 +1,8 @@
+# Optional offline fine-tuning extras.  These are deliberately excluded from
+# the API/container runtime. Install only in a dedicated training environment.
+accelerate>=1.0,<2
+datasets>=3.0,<4
+peft>=0.14,<1
+trl>=0.15,<1
+# Required only when LoRAConfig.use_4bit=true; common Windows builds do not support it.
+bitsandbytes>=0.43; platform_system != "Windows"

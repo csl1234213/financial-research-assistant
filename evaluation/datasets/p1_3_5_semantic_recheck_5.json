@@ -1,0 +1,96 @@
+{
+  "source_dataset": "evaluation/results/formal_20260914_p0_quality_sprint1_1_final/dataset.json",
+  "source_dataset_sha256": "e3eca76a8b56869e0861f5523ad91fc2d34a226badd1e2a5643111b2a76cb9f8",
+  "selection_frozen_before_requests": true,
+  "cases": [
+    {
+      "id": "ZH-013",
+      "language": "zh",
+      "category": "single_company",
+      "company": [
+        "Apple"
+      ],
+      "question": "总结苹果公司 2026 年第二季度的财务表现。",
+      "original_question": "总结苹果公司 2026 年第二季度的财务表现。",
+      "setup_question": null,
+      "historical_message_id": 246,
+      "expected_answer": "Actual Q2 FY2026 ended March28,2026: net sales $111,184m vs95,359m (+17%); net income29,578m vs24,780m; diluted EPS2.01 vs1.65; Services30,976m vs26,645m (+16%), advertising/App Store/cloud services drivers; iPhone56,994m (+22%, Pro models). Six-month (NOT quarterly) operating cash82,627m vs53,887m. Product/Services/total gross-margin percentages38.7/76.7/49.3%.",
+      "expected_sources": [
+        "Apple_Q2_2026.pdf"
+      ],
+      "semantic_recheck_role": "ZH-013"
+    },
+    {
+      "id": "EN-016",
+      "language": "en",
+      "category": "single_company",
+      "company": [
+        "Apple"
+      ],
+      "question": "What does Apple report about cash flow in Q2 2026?",
+      "original_question": "What does Apple report about cash flow in Q2 2026?",
+      "setup_question": null,
+      "historical_message_id": 136,
+      "expected_answer": "Actual Q2 FY2026 ended March28,2026: net sales $111,184m vs95,359m (+17%); net income29,578m vs24,780m; diluted EPS2.01 vs1.65; Services30,976m vs26,645m (+16%), advertising/App Store/cloud services drivers; iPhone56,994m (+22%, Pro models). Six-month (NOT quarterly) operating cash82,627m vs53,887m. Product/Services/total gross-margin percentages38.7/76.7/49.3%.",
+      "expected_sources": [
+        "Apple_Q2_2026.pdf"
+      ],
+      "semantic_recheck_role": "EN-016"
+    },
+    {
+      "id": "EN-019",
+      "language": "en",
+      "category": "comparison",
+      "company": [
+        "Tesla",
+        "NVIDIA"
+      ],
+      "question": "Compare Tesla and NVIDIA revenue performance.",
+      "original_question": "Compare Tesla and NVIDIA revenue performance.",
+      "setup_question": null,
+      "historical_message_id": 152,
+      "expected_answer": "Compare requested metrics/drivers/risks for every named company, label non-contemporaneous periods, no unsupported causal claims. Actual source PDF is Q4/FY2025 Update; page 4 historical Q2-2025 column: revenue $22,496m; automotive $16,661m; energy $2,789m; services $3,046m; GAAP gross margin 17.2%; operating margin 4.1%; net income $1,172m; operating cash flow $2,540m; FCF $146m. Do not misattribute Q4 narrative/YoY to Q2; disclose missing Q2-specific narrative. Actual Q1 FY2027 (ended April 26, 2026): revenue $81.6bn, +85% YoY/+20% QoQ; Data Center $75.2bn,+92% YoY; GAAP gross margin74.9%, non-GAAP75.0%; diluted EPS GAAP2.39/non-GAAP1.87. Growth driven by AI infrastructure/factories and agentic AI, not Apple data.",
+      "expected_sources": [
+        "Tesla_Q2_2025.pdf",
+        "NVIDIA_Q1_FY2027.pdf"
+      ],
+      "semantic_recheck_role": "EN-019"
+    },
+    {
+      "id": "ZH-019",
+      "language": "zh",
+      "category": "comparison",
+      "company": [
+        "Tesla",
+        "NVIDIA"
+      ],
+      "question": "比较特斯拉和英伟达的营收表现。",
+      "original_question": "比较特斯拉和英伟达的营收表现。",
+      "setup_question": null,
+      "historical_message_id": 264,
+      "expected_answer": "Compare requested metrics/drivers/risks for every named company, label non-contemporaneous periods, no unsupported causal claims. Actual source PDF is Q4/FY2025 Update; page 4 historical Q2-2025 column: revenue $22,496m; automotive $16,661m; energy $2,789m; services $3,046m; GAAP gross margin 17.2%; operating margin 4.1%; net income $1,172m; operating cash flow $2,540m; FCF $146m. Do not misattribute Q4 narrative/YoY to Q2; disclose missing Q2-specific narrative. Actual Q1 FY2027 (ended April 26, 2026): revenue $81.6bn, +85% YoY/+20% QoQ; Data Center $75.2bn,+92% YoY; GAAP gross margin74.9%, non-GAAP75.0%; diluted EPS GAAP2.39/non-GAAP1.87. Growth driven by AI infrastructure/factories and agentic AI, not Apple data.",
+      "expected_sources": [
+        "Tesla_Q2_2025.pdf",
+        "NVIDIA_Q1_FY2027.pdf"
+      ],
+      "semantic_recheck_role": "ZH-019"
+    },
+    {
+      "id": "ZH-008",
+      "language": "zh",
+      "category": "single_company",
+      "company": [
+        "NVIDIA"
+      ],
+      "question": "英伟达 2027 财年第一季度的数据中心业务表现如何？",
+      "original_question": "英伟达 2027 财年第一季度的数据中心业务表现如何？",
+      "setup_question": null,
+      "historical_message_id": 236,
+      "expected_answer": "Actual Q1 FY2027 (ended April 26, 2026): revenue $81.6bn, +85% YoY/+20% QoQ; Data Center $75.2bn,+92% YoY; GAAP gross margin74.9%, non-GAAP75.0%; diluted EPS GAAP2.39/non-GAAP1.87. Growth driven by AI infrastructure/factories and agentic AI, not Apple data.",
+      "expected_sources": [
+        "NVIDIA_Q1_FY2027.pdf"
+      ],
+      "semantic_recheck_role": "ZH-008"
+    }
+  ]
+}

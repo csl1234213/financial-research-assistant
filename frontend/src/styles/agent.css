@@ -1,0 +1,394 @@
+/* ============================================================
+   Agent Timeline Panel
+   ============================================================ */
+
+.agent-timeline-panel {
+  padding: 16px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+}
+
+.agent-timeline-panel__title {
+  margin: 0 0 16px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.agent-timeline-panel__empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.agent-timeline-panel__summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-muted);
+}
+
+.agent-timeline-panel__summary-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.agent-timeline-panel__summary-value {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent-blue);
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.2);
+}
+
+/* ============================================================
+   Agent Timeline
+   ============================================================ */
+
+.agent-timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================
+   Agent Step
+   ============================================================ */
+
+.agent-step {
+  display: flex;
+  gap: 12px;
+  min-height: 0;
+}
+
+.agent-step__connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.agent-step__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--border-default);
+  background: var(--bg-tertiary);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.agent-step__dot--completed {
+  border-color: var(--accent-green);
+  background: var(--accent-green);
+  box-shadow: 0 0 6px rgba(63, 185, 80, 0.4);
+}
+
+.agent-step__dot--running {
+  border-color: var(--accent-blue);
+  background: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(88, 166, 255, 0.5);
+  animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(88, 166, 255, 0.3); }
+  50% { box-shadow: 0 0 12px rgba(88, 166, 255, 0.7); }
+}
+
+.agent-step__dot--pending {
+  border-color: var(--border-default);
+  background: transparent;
+}
+
+.agent-step__dot--failed {
+  border-color: var(--accent-red);
+  background: var(--accent-red);
+  box-shadow: 0 0 6px rgba(248, 81, 73, 0.4);
+}
+
+.agent-step__line {
+  width: 2px;
+  flex: 1;
+  min-height: 24px;
+  background: var(--border-default);
+  margin: 4px 0;
+}
+
+.agent-step__content {
+  flex: 1;
+  padding-bottom: 18px;
+  min-width: 0;
+}
+
+.agent-step:last-child .agent-step__content {
+  padding-bottom: 0;
+}
+
+.agent-step__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.agent-step__name {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.agent-step__description {
+  margin: 0;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.agent-step__duration {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ============================================================
+   Status Badge
+   ============================================================ */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.status-badge__icon {
+  font-size: 0.56rem;
+}
+
+.status-badge--completed {
+  color: var(--accent-green);
+  background: rgba(63, 185, 80, 0.1);
+  border: 1px solid rgba(63, 185, 80, 0.2);
+}
+
+.status-badge--running {
+  color: var(--accent-blue);
+  background: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.2);
+  animation: badgePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.status-badge--pending {
+  color: var(--text-muted);
+  background: rgba(110, 118, 129, 0.1);
+  border: 1px solid var(--border-default);
+}
+
+.status-badge--failed {
+  color: var(--accent-red);
+  background: rgba(248, 81, 73, 0.1);
+  border: 1px solid rgba(248, 81, 73, 0.2);
+}
+
+/* ============================================================
+   Comfortable Agent Trace Reading
+   ============================================================ */
+
+.agent-timeline-panel {
+  min-width: 0;
+  padding: 20px;
+  border-radius: 14px;
+}
+
+.agent-timeline-panel__title {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+details.agent-timeline-panel > summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 42px;
+  color: var(--text-primary);
+  list-style: none;
+}
+
+details.agent-timeline-panel > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.agent-timeline-panel > summary .agent-timeline-panel__title {
+  min-width: 0;
+  font-size: 1.06rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+details.agent-timeline-panel > summary .agent-timeline-panel__summary-value {
+  flex: 0 1 auto;
+  margin-left: auto;
+}
+
+details.agent-timeline-panel > summary::after {
+  content: "\25BE";
+  flex: 0 0 auto;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  transition: transform 0.18s ease;
+}
+
+details.agent-timeline-panel[open] > summary {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-muted);
+}
+
+details.agent-timeline-panel[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+details.agent-timeline-panel > summary:focus-visible {
+  border-radius: var(--radius-sm);
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 5px;
+}
+
+.agent-timeline-panel__body {
+  margin-top: 16px;
+}
+
+.agent-timeline-panel__empty {
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.agent-timeline-panel__summary {
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+}
+
+.agent-timeline-panel__summary-label {
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.agent-timeline-panel__summary-value {
+  min-width: 0;
+  padding: 4px 11px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.agent-step {
+  gap: 14px;
+}
+
+.agent-step__connector {
+  width: 22px;
+  padding-top: 4px;
+}
+
+.agent-step__dot {
+  width: 12px;
+  height: 12px;
+}
+
+.agent-step__line {
+  min-height: 30px;
+  margin: 6px 0;
+}
+
+.agent-step__content {
+  padding-bottom: 24px;
+}
+
+.agent-step__header {
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+
+.agent-step__name {
+  min-width: 0;
+  font-size: 0.94rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.agent-step__description {
+  font-size: 0.86rem;
+  line-height: 1.62;
+  overflow-wrap: anywhere;
+}
+
+.agent-step__duration {
+  margin-top: 7px;
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.status-badge {
+  flex: 0 0 auto;
+  gap: 5px;
+  padding: 4px 9px;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.status-badge__icon {
+  font-size: 0.64rem;
+}
+
+@media (max-width: 680px) {
+  .agent-timeline-panel {
+    padding: 16px;
+  }
+
+  .agent-step__header {
+    flex-wrap: wrap;
+  }
+
+  details.agent-timeline-panel > summary {
+    flex-wrap: wrap;
+  }
+
+  details.agent-timeline-panel > summary .agent-timeline-panel__summary-value {
+    margin-left: 0;
+  }
+
+  details.agent-timeline-panel > summary::after {
+    margin-left: auto;
+  }
+}

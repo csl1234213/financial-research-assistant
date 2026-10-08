@@ -1,0 +1,17 @@
+# Shared LLM, embedding, and retrieval runtime.
+#
+# Pin the CPU wheel explicitly on Linux/Windows. A plain PyPI torch wheel can
+# resolve NVIDIA CUDA packages on Linux even though this service performs CPU
+# inference. macOS publishes its CPU wheel on PyPI without the +cpu suffix.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.12.1+cpu; sys_platform != "darwin"
+torch==2.12.1; sys_platform == "darwin"
+
+chromadb==1.5.9
+google-genai==2.10.0
+openai==2.43.0
+PyMuPDF==1.27.2.3
+python-dotenv==1.2.2
+rank-bm25==0.2.2
+sentence-transformers==5.6.0
+transformers==5.12.1

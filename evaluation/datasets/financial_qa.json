@@ -1,0 +1,177 @@
+[
+    {
+        "id": "q001",
+        "question": "分析 NVIDIA 2024年Q3财报表现",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://nvidia.com/earnings"],
+        "criteria": ["revenue_growth", "segment_breakdown", "margin_analysis"]
+    },
+    {
+        "id": "q002",
+        "question": "特斯拉的毛利率变化趋势如何？与竞争对手对比",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://tesla.com"],
+        "criteria": ["gross_margin", "competitor_comparison", "trend_analysis"]
+    },
+    {
+        "id": "q003",
+        "question": "苹果公司的现金流状况和分红政策",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://apple.com"],
+        "criteria": ["free_cash_flow", "dividend_policy", "buyback_analysis"]
+    },
+    {
+        "id": "q004",
+        "question": "评估阿里巴巴的债务风险",
+        "expected_tools": ["search", "risk_analysis"],
+        "expected_sources": ["https://alibaba.com"],
+        "criteria": ["debt_to_equity", "interest_coverage", "liquidity_ratio"]
+    },
+    {
+        "id": "q005",
+        "question": "分析微软Azure云业务的增长前景",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://microsoft.com"],
+        "criteria": ["revenue_growth", "market_share", "competitive_advantage"]
+    },
+    {
+        "id": "q006",
+        "question": "亚马逊的电商业务和AWS业务的收入占比",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://amazon.com"],
+        "criteria": ["segment_breakdown", "revenue_mix", "margin_by_segment"]
+    },
+    {
+        "id": "q007",
+        "question": "Meta的Reality Labs部门亏损情况分析",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://meta.com"],
+        "criteria": ["operating_loss", "investment_analysis", "future_outlook"]
+    },
+    {
+        "id": "q008",
+        "question": "比较贵州茅台和五粮液的估值水平",
+        "expected_tools": ["search", "valuation_analysis"],
+        "expected_sources": [],
+        "criteria": ["pe_ratio", "market_cap", "growth_comparison"]
+    },
+    {
+        "id": "q009",
+        "question": "分析比亚迪的新能源汽车业务营收增长",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": [],
+        "criteria": ["revenue_growth", "sales_volume", "market_share"]
+    },
+    {
+        "id": "q010",
+        "question": "评估JP Morgan的资产质量和拨备覆盖率",
+        "expected_tools": ["search", "risk_analysis"],
+        "expected_sources": ["https://jpmorgan.com"],
+        "criteria": ["npl_ratio", "provision_coverage", "capital_adequacy"]
+    },
+    {
+        "id": "q011",
+        "question": "宁德时代的研发投入和电池技术路线",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": [],
+        "criteria": ["rd_spending", "technology_roadmap", "patent_analysis"]
+    },
+    {
+        "id": "q012",
+        "question": "分析腾讯的广告业务复苏情况",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://tencent.com"],
+        "criteria": ["ad_revenue_growth", "segment_analysis", "macro_impact"]
+    },
+    {
+        "id": "q013",
+        "question": "谷歌的资本支出和AI基础设施投资",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://google.com"],
+        "criteria": ["capex_trend", "ai_investment", "roi_analysis"]
+    },
+    {
+        "id": "q014",
+        "question": "恒瑞医药的研发管线价值评估",
+        "expected_tools": ["search", "valuation_analysis"],
+        "expected_sources": [],
+        "criteria": ["pipeline_value", "phase_distribution", "revenue_forecast"]
+    },
+    {
+        "id": "q015",
+        "question": "分析拼多多的Temu海外扩张策略",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": [],
+        "criteria": ["expansion_cost", "user_growth", "market_penetration"]
+    },
+    {
+        "id": "q016",
+        "question": "伯克希尔哈撒韦的保险浮存金利用效率",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://berkshirehathaway.com"],
+        "criteria": ["float_analysis", "investment_return", "underwriting_profit"]
+    },
+    {
+        "id": "q017",
+        "question": "特斯拉的自动驾驶FSD商业化前景",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://tesla.com"],
+        "criteria": ["revenue_potential", "regulatory_risk", "competitive_landscape"]
+    },
+    {
+        "id": "q018",
+        "question": "分析中芯国际的先进制程进展和产能利用率",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": [],
+        "criteria": ["node_progress", "capacity_utilization", "capex_efficiency"]
+    },
+    {
+        "id": "q019",
+        "question": "Coinbase的加密货币交易收入波动性分析",
+        "expected_tools": ["search", "risk_analysis"],
+        "expected_sources": ["https://coinbase.com"],
+        "criteria": ["revenue_volatility", "crypto_exposure", "diversification"]
+    },
+    {
+        "id": "q020",
+        "question": "分析迪士尼的流媒体业务盈利拐点",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://disney.com"],
+        "criteria": ["subscriber_growth", "arpu_trend", "profitability_timeline"]
+    },
+    {
+        "id": "q021",
+        "question": "分析不存在的公司XYZ Corp的财务状况",
+        "expected_tools": ["search"],
+        "expected_sources": [],
+        "criteria": ["error_handling", "no_hallucination"]
+    },
+    {
+        "id": "q022",
+        "question": "比较台积电和三星电子的半导体制造竞争力",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": [],
+        "criteria": ["market_share", "technology_node", "capex_comparison"]
+    },
+    {
+        "id": "q023",
+        "question": "分析奈飞的用户增长和内容投入回报率",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://netflix.com"],
+        "criteria": ["subscriber_growth", "content_spend", "roi_analysis"]
+    },
+    {
+        "id": "q024",
+        "question": "贵州茅台的ROE和分红率历史趋势",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": [],
+        "criteria": ["roe_trend", "dividend_yield", "shareholder_return"]
+    },
+    {
+        "id": "q025",
+        "question": "分析英伟达的GPU市场份额和竞争壁垒",
+        "expected_tools": ["search", "financial_analysis"],
+        "expected_sources": ["https://nvidia.com"],
+        "criteria": ["market_share", "competitive_moat", "cuda_ecosystem"]
+    }
+]

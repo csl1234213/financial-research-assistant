@@ -1,0 +1,17 @@
+{
+  "source_dataset": "evaluation/results/formal_20260914_p0_quality_sprint1_1_final/dataset.json",
+  "source_dataset_sha256": "e3eca76a8b56869e0861f5523ad91fc2d34a226badd1e2a5643111b2a76cb9f8",
+  "selection_frozen_before_requests": true,
+  "cases": [
+    {"id": "EN-007", "role": "nvidia_q1_high_risk"},
+    {"id": "EN-002", "role": "tesla_period_and_numeric_normalization"},
+    {"id": "EN-019", "role": "multi_company_revenue_comparison"},
+    {"id": "ZH-044", "role": "direct_chat_no_citations"},
+    {"id": "ZH-007", "role": "nvidia_q1_table_heavy"},
+    {"id": "ZH-013", "role": "apple_table_heavy"},
+    {"id": "EN-016", "role": "cash_flow_table"},
+    {"id": "ZH-008", "role": "nvidia_data_center_table"},
+    {"id": "EN-033", "role": "unsupported_insufficient_evidence"},
+    {"id": "ZH-019", "role": "multi_company_derived_comparison"}
+  ]
+}

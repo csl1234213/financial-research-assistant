@@ -1,0 +1,22 @@
+{
+  "schema": "rc1-r3-safe-generation-metadata.v1",
+  "source": "R2 real transport receipt, 2026-10-03; visible bodies were NOT retained",
+  "model": "deepseek-v4-flash",
+  "call1": {
+    "finish_reason": "length",
+    "visible_content_empty": true,
+    "usage": {"prompt_tokens": 5130, "completion_tokens": 1024, "total_tokens": 6154,
+      "completion_tokens_details": {"reasoning_tokens": 1024}}
+  },
+  "call2": {
+    "finish_reason": "length",
+    "visible_content_empty": false,
+    "visible_body": "NOT_RETAINED",
+    "usage": {"prompt_tokens": 5105, "completion_tokens": 1024, "total_tokens": 6129}
+  },
+  "synthetic_cases": {
+    "case3": "stop + minimal schema-valid answer, SYNTHETIC",
+    "case4": "stop + malformed JSON, SYNTHETIC",
+    "case5": "empty length -> bounded recovery, actual metadata + SYNTHETIC visible body"
+  }
+}

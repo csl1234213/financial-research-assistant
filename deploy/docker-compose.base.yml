@@ -1,0 +1,59 @@
+# ============================================================
+# Base Compose — shared services, volumes, networks
+# ============================================================
+# Usage:
+#   Root: docker compose up
+#   Dev:  docker compose -f deploy/docker-compose.base.yml -f deploy/docker-compose.dev.yml up
+#   Prod: docker compose -f deploy/docker-compose.base.yml -f deploy/docker-compose.prod.yml up
+# ============================================================
+
+services:
+  # ---------- FastAPI Backend ----------
+  financial-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: financial-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - financial_uploads:/app/storage/uploads
+      - financial_chroma:/app/chroma_db
+      - financial_logs:/app/logs
+      - ${USERPROFILE}/.cache/huggingface:/home/appuser/.cache/huggingface
+    env_file:
+      - .env
+    environment:
+      - HF_ENDPOINT=https://huggingface.co
+    networks:
+      - financial_network
+
+  # ---------- Streamlit Frontend ----------
+  financial-ui:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ui
+    container_name: financial-ui
+    ports:
+      - "8501:8501"
+    volumes:
+      - financial_uploads:/app/storage/uploads:ro
+    environment:
+      - API_BASE_URL=http://financial-api:8000
+    depends_on:
+      financial-api:
+        condition: service_healthy
+    networks:
+      - financial_network
+
+volumes:
+  financial_uploads:
+    driver: local
+  financial_chroma:
+    driver: local
+  financial_logs:
+    driver: local
+
+networks:
+  financial_network:
+    driver: bridge

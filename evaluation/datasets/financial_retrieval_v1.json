@@ -1,0 +1,212 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "financial-rag-retrieval-v1",
+  "description": "Seeded offline corpus for labelled retrieval, citation-source, and tenant-isolation regression gates.",
+  "seed": 733,
+  "thresholds": {
+    "recall_at_k": 100.0,
+    "mrr": 100.0,
+    "ndcg": 100.0,
+    "citation_source_match": 100.0,
+    "maximum_tenant_leaks": 0
+  },
+  "corpus": [
+    {
+      "document_id": "tesla-q2-2025",
+      "chunk_id": "tesla-q2-2025-revenue",
+      "tenant_id": 7,
+      "company": "Tesla",
+      "source_filename": "Tesla_Q2_2025.pdf",
+      "page": 4,
+      "content": "Tesla Q2 2025 automotive revenue growth was supported by higher vehicle deliveries and energy generation revenue.",
+      "metadata": {
+        "year": "2025",
+        "section": "revenue"
+      }
+    },
+    {
+      "document_id": "tesla-q2-2025",
+      "chunk_id": "tesla-q2-2025-margin",
+      "tenant_id": 7,
+      "company": "Tesla",
+      "source_filename": "Tesla_Q2_2025.pdf",
+      "page": 7,
+      "content": "Tesla Q2 2025 automotive gross margin reflected pricing, manufacturing costs, and regulatory credits.",
+      "metadata": {
+        "year": "2025",
+        "section": "margin"
+      }
+    },
+    {
+      "document_id": "nvidia-q1-fy2026",
+      "chunk_id": "nvidia-q1-fy2026-datacenter",
+      "tenant_id": 7,
+      "company": "NVIDIA",
+      "source_filename": "NVIDIA_Q1_FY2026.pdf",
+      "page": 3,
+      "content": "NVIDIA fiscal 2026 first quarter data center revenue growth was driven by accelerated computing demand.",
+      "metadata": {
+        "year": "2026",
+        "section": "data-center"
+      }
+    },
+    {
+      "document_id": "apple-q3-2025",
+      "chunk_id": "apple-q3-2025-services",
+      "tenant_id": 7,
+      "company": "Apple",
+      "source_filename": "Apple_Q3_2025.pdf",
+      "page": 5,
+      "content": "Apple Q3 2025 services revenue reached a quarterly record as the installed base and paid subscriptions expanded.",
+      "metadata": {
+        "year": "2025",
+        "section": "services"
+      }
+    },
+    {
+      "document_id": "portfolio-risk-2025",
+      "chunk_id": "portfolio-risk-2025-liquidity",
+      "tenant_id": 7,
+      "company": "Portfolio",
+      "source_filename": "Portfolio_Risk_2025.pdf",
+      "page": 2,
+      "content": "Portfolio liquidity risk monitoring covers cash buffers, debt maturities, and refinancing exposure.",
+      "metadata": {
+        "year": "2025",
+        "section": "liquidity"
+      }
+    },
+    {
+      "document_id": "tenant-eight-private",
+      "chunk_id": "tenant-eight-private-covenant",
+      "tenant_id": 8,
+      "company": "PrivateCo",
+      "source_filename": "Tenant8_Private_Covenant.pdf",
+      "page": 1,
+      "content": "Tenant eight private covenant analysis uses confidential leverage assumptions.",
+      "metadata": {
+        "year": "2025",
+        "section": "covenant"
+      }
+    },
+    {
+      "document_id": "foreign-nebula",
+      "chunk_id": "foreign-nebula-zeta",
+      "tenant_id": 99,
+      "company": "Tesla",
+      "source_filename": "Tenant99_Project_Nebula.pdf",
+      "page": 9,
+      "content": "Project Nebula covenant breach code ZETA is confidential tenant ninety nine evidence. Tesla revenue growth Project Nebula ZETA.",
+      "metadata": {
+        "year": "2025",
+        "section": "confidential"
+      }
+    },
+    {
+      "document_id": "public-cash-flow-glossary",
+      "chunk_id": "public-cash-flow-conversion",
+      "tenant_id": 0,
+      "company": "Market",
+      "source_filename": "Public_Financial_Glossary.pdf",
+      "page": 6,
+      "content": "Free cash flow conversion compares free cash flow with an earnings measure to describe cash realization.",
+      "metadata": {
+        "year": "2025",
+        "section": "glossary"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "tesla-revenue-private",
+      "scenario": "private_tenant_hybrid_retrieval",
+      "query": "Analyze Tesla Q2 2025 automotive revenue growth from vehicle deliveries and energy generation",
+      "tenant_id": 7,
+      "company": "Tesla",
+      "filters": {
+        "year": "2025",
+        "section": "revenue"
+      },
+      "top_k": 1,
+      "expected_relevant_ids": [
+        "tesla-q2-2025-revenue"
+      ],
+      "expected_sources": [
+        "Tesla_Q2_2025.pdf"
+      ],
+      "forbidden_chunk_ids": [
+        "foreign-nebula-zeta"
+      ]
+    },
+    {
+      "id": "nvidia-data-center-private",
+      "scenario": "private_tenant_hybrid_retrieval",
+      "query": "NVIDIA fiscal 2026 first quarter data center revenue growth accelerated computing demand",
+      "tenant_id": 7,
+      "company": "NVIDIA",
+      "top_k": 1,
+      "expected_relevant_ids": [
+        "nvidia-q1-fy2026-datacenter"
+      ],
+      "expected_sources": [
+        "NVIDIA_Q1_FY2026.pdf"
+      ],
+      "forbidden_chunk_ids": [
+        "tenant-eight-private-covenant",
+        "foreign-nebula-zeta"
+      ]
+    },
+    {
+      "id": "apple-services-private",
+      "scenario": "private_tenant_document_filter",
+      "query": "Apple Q3 2025 services revenue quarterly record paid subscriptions",
+      "tenant_id": 7,
+      "company": "Apple",
+      "document_ids": [
+        "apple-q3-2025"
+      ],
+      "top_k": 1,
+      "expected_relevant_ids": [
+        "apple-q3-2025-services"
+      ],
+      "expected_sources": [
+        "Apple_Q3_2025.pdf"
+      ],
+      "forbidden_chunk_ids": [
+        "tenant-eight-private-covenant",
+        "foreign-nebula-zeta"
+      ]
+    },
+    {
+      "id": "public-cash-flow-baseline",
+      "scenario": "public_tenant_scope",
+      "query": "Define free cash flow conversion and cash realization",
+      "tenant_id": 0,
+      "top_k": 1,
+      "expected_relevant_ids": [
+        "public-cash-flow-conversion"
+      ],
+      "expected_sources": [
+        "Public_Financial_Glossary.pdf"
+      ],
+      "forbidden_chunk_ids": [
+        "tenant-eight-private-covenant",
+        "foreign-nebula-zeta"
+      ]
+    },
+    {
+      "id": "foreign-nebula-negative",
+      "scenario": "tenant_isolation_negative",
+      "query": "Project Nebula covenant breach code ZETA confidential evidence",
+      "tenant_id": 7,
+      "company": "Tesla",
+      "top_k": 3,
+      "expected_relevant_ids": [],
+      "expected_sources": [],
+      "forbidden_chunk_ids": [
+        "tenant-eight-private-covenant",
+        "foreign-nebula-zeta"
+      ]
+    }
+  ]
+}

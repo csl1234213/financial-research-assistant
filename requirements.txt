@@ -1,0 +1,5 @@
+# Complete local development and test environment.
+#
+# Production API/worker images install requirements/api.txt directly so test,
+# lint, legacy UI, and training packages never enter the runtime image.
+-r requirements/dev.txt

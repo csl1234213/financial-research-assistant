@@ -1,0 +1,9 @@
+{
+  "evaluation_version": "V8.1.0",
+  "status": "BLOCKED",
+  "language": "zh",
+  "environment": "financial-rag-prod",
+  "completed_cases": 0,
+  "planned_cases": 50,
+  "blocker": "English smoke case reached the API but failed with Provider Configuration Error and empty citations; Chinese cases were not sent to avoid fabricating evaluation results."
+}

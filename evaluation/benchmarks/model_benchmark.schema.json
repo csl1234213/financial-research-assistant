@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://financial-rag-assistant.local/schemas/model-benchmark-1.0.json",
+  "title": "Model benchmark protocol",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "protocol_id", "model_id", "prompt_version", "cases"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "protocol_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+    "model_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "prompt_version": {"type": "string", "minLength": 1, "maxLength": 256},
+    "description": {"type": "string", "maxLength": 16000},
+    "metadata": {"type": "object"},
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/case"}
+    }
+  },
+  "$defs": {
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "prompt"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+        "prompt": {"type": "string", "minLength": 1, "maxLength": 32000},
+        "expected_terms": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "reference_answer": {"type": "string", "minLength": 1, "maxLength": 32000},
+        "prompt_version": {"type": "string", "minLength": 1, "maxLength": 256},
+        "metadata": {"type": "object"}
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+# ============================================================
+# financial-ui — Streamlit Frontend
+# ============================================================
+FROM python:3.11-slim
+
+LABEL org.opencontainers.image.title="Financial Research Copilot - UI"
+LABEL org.opencontainers.image.version="8.2.0"
+LABEL org.opencontainers.image.description="AI Financial Research Platform UI"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.source="https://github.com/csl1234213/financial-rag-assistant"
+
+WORKDIR /app
+
+COPY requirements/ui.txt ./requirements/ui.txt
+
+RUN pip install --no-cache-dir -r requirements/ui.txt
+
+COPY . .
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+RUN adduser --disabled-password --gecos "" appuser
+
+RUN chown -R appuser:appuser /app
+
+USER appuser
+
+EXPOSE 8501
+
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=20s \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')" || exit 1
+
+CMD ["streamlit", "run", "ui/streamlit_app.py", "--server.address=0.0.0.0", "--server.port=8501"]

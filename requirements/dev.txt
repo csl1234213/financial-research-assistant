@@ -1,0 +1,9 @@
+# Full backend development and CI test environment.
+-r api.txt
+
+httpx==0.28.1
+pytest==9.1.1
+pytest-cov==7.1.0
+PyYAML==6.0.3
+requests==2.34.2
+ruff==0.12.0

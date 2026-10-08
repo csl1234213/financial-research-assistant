@@ -1,0 +1,494 @@
+/* ============================================================
+   App Layout
+   ============================================================ */
+
+.app-layout {
+  display: grid;
+  grid-template-rows: 52px 1fr;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   App Navigation
+   ============================================================ */
+
+.app-nav {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 0;
+  padding: 0 24px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-muted);
+}
+
+.app-nav__pages {
+  display: flex;
+  min-width: 0;
+}
+
+.app-nav__account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.app-nav__email {
+  max-width: 260px;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-nav__logout {
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  font-size: 0.86rem;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.app-nav__logout:hover {
+  border-color: var(--accent-blue);
+}
+
+.app-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 20px;
+  color: var(--text-muted);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: -1px;
+}
+
+.app-nav__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.app-nav__link:hover {
+  color: var(--text-primary);
+}
+
+.app-nav__link--active {
+  color: var(--accent-blue);
+  border-bottom-color: var(--accent-blue);
+}
+
+/* ============================================================
+   Header
+   ============================================================ */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--border-default);
+  background: var(--bg-secondary);
+  z-index: 10;
+}
+
+.app-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-header__logo {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--brand-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.app-header__title {
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.app-header__subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  line-height: 1.45;
+  margin-left: 8px;
+  padding-left: 8px;
+  border-left: 1px solid var(--border-default);
+}
+
+.app-header__status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.4;
+  background: rgba(63, 185, 80, 0.12);
+  color: var(--accent-green);
+}
+
+.app-header__status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 6px rgba(63, 185, 80, 0.5);
+}
+
+/* ============================================================
+   Chat Layout (Sidebar + Main + Panel)
+   ============================================================ */
+
+.copilot-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) 340px;
+  max-width: 100vw;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Sidebar — Dark Theme
+   ============================================================ */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 24px 20px;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-default);
+  overflow-y: auto;
+}
+
+.sidebar h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sidebar__label {
+  margin: 0 0 8px;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sidebar ul {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-muted);
+  font-size: 0.96rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sidebar li:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.language-switcher {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-muted);
+}
+
+.language-switcher button {
+  flex: 1;
+  padding: 6px 8px;
+  color: var(--text-secondary);
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.35;
+  transition: all 0.15s ease;
+}
+
+.language-switcher button:hover {
+  color: var(--text-primary);
+}
+
+.language-switcher .language-switcher__button--active {
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+.language-switcher--compact {
+  width: 98px;
+  flex: 0 0 auto;
+  padding: 2px;
+}
+
+.language-switcher--compact button {
+  padding: 4px 6px;
+  font-size: 0.78rem;
+}
+
+/* ============================================================
+   Main Chat Area
+   ============================================================ */
+
+.main-chat {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 20px;
+  min-height: 0;
+  padding: 24px clamp(20px, 2.5vw, 36px);
+  overflow: hidden;
+}
+
+.main-chat__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-muted);
+}
+
+.main-chat__header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.status {
+  padding: 5px 11px;
+  color: var(--accent-green);
+  border-radius: 999px;
+  background: rgba(63, 185, 80, 0.12);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.4;
+  border: 1px solid rgba(63, 185, 80, 0.2);
+}
+
+/* ============================================================
+   Agent Panel (Right Sidebar)
+   ============================================================ */
+
+.agent-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+  padding: 24px 20px;
+  border-left: 1px solid var(--border-default);
+  background: var(--bg-secondary);
+  overflow-y: auto;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media (max-width: 1100px) {
+  .copilot-layout {
+    grid-template-columns: 200px minmax(0, 1fr) 280px;
+  }
+}
+
+@media (max-width: 980px) {
+  .copilot-layout {
+    grid-template-columns: 180px minmax(0, 1fr);
+  }
+  .agent-panel {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--border-default);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .app-nav {
+    padding: 0 8px;
+  }
+  .app-nav__link {
+    gap: 4px;
+    padding: 14px 8px;
+    font-size: 0.82rem;
+  }
+  .app-nav__icon,
+  .app-nav__email {
+    display: none;
+  }
+  .app-nav__link--settings .app-nav__icon {
+    display: inline;
+  }
+  .app-nav__link--settings .app-nav__label {
+    display: none;
+  }
+  .app-nav__account {
+    gap: 4px;
+  }
+  .app-nav__logout {
+    padding: 7px 9px;
+    font-size: 0.8rem;
+  }
+  .app-header {
+    padding: 0 14px;
+  }
+  .app-header__subtitle {
+    display: none;
+  }
+  .copilot-layout {
+    display: block;
+  }
+  .sidebar {
+    gap: 16px;
+    padding: 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-default);
+  }
+  .sidebar ul {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .main-chat {
+    min-height: 60vh;
+    padding: 16px 14px;
+  }
+  .main-chat__header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .agent-panel {
+    display: flex;
+    padding: 14px;
+  }
+}
+
+/* ============================================================
+   Error Boundary
+   ============================================================ */
+
+.error-boundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 24px;
+  background: var(--bg-primary);
+}
+
+.error-boundary__card {
+  max-width: 480px;
+  width: 100%;
+  padding: 48px 40px;
+  text-align: center;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+}
+
+.error-boundary__icon {
+  font-size: 2.8rem;
+  display: block;
+  margin-bottom: 16px;
+  color: var(--accent-orange);
+}
+
+.error-boundary__title {
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.error-boundary__message {
+  margin: 0 0 24px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.error-boundary__button {
+  padding: 10px 28px;
+  color: #fff;
+  background: var(--accent-blue);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.error-boundary__button:hover {
+  background: #4090e0;
+  box-shadow: 0 0 12px rgba(88, 166, 255, 0.3);
+}

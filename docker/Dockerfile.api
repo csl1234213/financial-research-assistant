@@ -1,0 +1,76 @@
+# ============================================================
+# Financial RAG Assistant — Backend API Dockerfile
+# ============================================================
+# Multi-stage build for FastAPI backend
+# ============================================================
+
+FROM python:3.12-slim AS builder
+
+WORKDIR /app
+
+# Install system dependencies for PyMuPDF and torch
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+     libgl1 \
+    libglib2.0-0t64 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install only production API/worker dependencies. The development, legacy UI,
+# and optional training layers are intentionally excluded from this image.
+COPY requirements ./requirements
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements/api.txt && \
+    pip check
+
+# ============================================================
+# Runtime stage
+# ============================================================
+FROM python:3.12-slim AS runtime
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libglib2.0-0t64 \
+    curl \
+    tesseract-ocr \
+    tesseract-ocr-eng \
+    tesseract-ocr-chi-sim \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN groupadd -r appuser && useradd -r -g appuser -m appuser
+
+WORKDIR /app
+
+# Copy installed packages from builder
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# Copy application code
+COPY --chown=appuser:appuser . .
+
+# Create writable runtime directories before named volumes are mounted. Docker
+# copies this ownership into newly-created volumes, so the non-root runtime can
+# download pinned Hugging Face models without relaxing the container user.
+RUN mkdir -p \
+        /app/chroma_db \
+        /app/storage/uploads \
+        /app/logs \
+        /home/appuser/.cache/huggingface && \
+    chown -R appuser:appuser \
+        /app/chroma_db \
+        /app/storage/uploads \
+        /app/logs \
+        /home/appuser/.cache
+
+# Copy entrypoint
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh && chown appuser:appuser /entrypoint.sh
+
+USER appuser
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/api/v1/ready || exit 1
+
+ENTRYPOINT ["/entrypoint.sh"]

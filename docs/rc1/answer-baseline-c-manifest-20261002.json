@@ -1,0 +1,621 @@
+{
+  "ANSWER_BASELINE_COMMIT_SEPARABLE": true,
+  "COMMIT_C_SELF_CONTAINED": true,
+  "BASELINE_UNTRACKED_HIDDEN_DEPENDENCIES": 0,
+  "UNKNOWN": 0,
+  "graph": [
+    {
+      "PATH": "core/answer_synthesis_ollama.py",
+      "SYMBOLS": [
+        "LocalQwenDraftGenerator"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_draft_verifier.py",
+        "core/answer_synthesis_workflow.py",
+        "llm/adapters/ollama_provider.py",
+        "llm/providers/provider_config.py",
+        "llm/providers/provider_guard.py",
+        "llm/providers/provider_models.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_PORT",
+      "WHY_REQUIRED": "Root Answer port/release",
+      "USED_BY": []
+    },
+    {
+      "PATH": "core/answer_synthesis_narrative_workflow.py",
+      "SYMBOLS": [
+        "NarrativeOutcome",
+        "verified_narrative_outcome_chunks",
+        "_usage",
+        "synthesize_narrative"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_batched_reviewer.py",
+        "core/answer_synthesis_budget.py",
+        "core/answer_synthesis_narrative_ollama.py",
+        "core/answer_synthesis_semantic.py",
+        "core/answer_synthesis_usage.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_PORT",
+      "WHY_REQUIRED": "Root Answer port/release",
+      "USED_BY": []
+    },
+    {
+      "PATH": "core/answer_synthesis_semantic_ollama.py",
+      "SYMBOLS": [
+        "parse_local_review",
+        "build_semantic_review_prompt",
+        "LocalQwenEntailmentReviewer"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_contracts.py",
+        "core/answer_synthesis_narrative_strategy.py",
+        "core/answer_synthesis_reference_transport.py",
+        "core/answer_synthesis_semantic.py",
+        "core/narrative_subject_binding.py",
+        "llm/adapters/ollama_provider.py",
+        "llm/providers/provider_config.py",
+        "llm/providers/provider_guard.py",
+        "llm/providers/provider_models.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_PORT",
+      "WHY_REQUIRED": "Root Answer port/release",
+      "USED_BY": [
+        "core/answer_synthesis_deepseek.py",
+        "core/answer_synthesis_review_batches.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_release.py",
+      "SYMBOLS": [
+        "verified_answer_chunks"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_analysis.py",
+        "core/answer_synthesis_contracts.py",
+        "core/answer_synthesis_draft_verifier.py",
+        "core/answer_synthesis_renderer.py",
+        "core/answer_synthesis_workflow.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_PORT",
+      "WHY_REQUIRED": "Root Answer port/release",
+      "USED_BY": []
+    },
+    {
+      "PATH": "core/answer_synthesis_deepseek.py",
+      "SYMBOLS": [
+        "DeepSeekSynthesisPorts"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_narrative.py",
+        "core/answer_synthesis_narrative_ollama.py",
+        "core/answer_synthesis_narrative_strategy.py",
+        "core/answer_synthesis_reference_transport.py",
+        "core/answer_synthesis_semantic_ollama.py",
+        "core/answer_synthesis_usage.py",
+        "llm/adapters/deepseek_provider.py",
+        "llm/providers/provider_config.py",
+        "llm/providers/provider_models.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_PORT",
+      "WHY_REQUIRED": "Root Answer port/release",
+      "USED_BY": []
+    },
+    {
+      "PATH": "core/answer_synthesis_draft_verifier.py",
+      "SYMBOLS": [
+        "ExtractedFactClaim",
+        "factual_sentence_variants",
+        "ControlledFactDraftVerifier"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_contracts.py",
+        "core/answer_synthesis_renderer.py",
+        "core/financial_metric_registry.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_ollama.py",
+        "core/answer_synthesis_release.py",
+        "core/answer_synthesis_workflow.py",
+        "core/answer_synthesis_semantic.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_workflow.py",
+      "SYMBOLS": [
+        "SynthesisBudget",
+        "DraftRequest",
+        "DraftCandidate",
+        "DraftGenerator",
+        "SynthesisOutcome",
+        "BoundedSynthesisWorkflow"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_analysis.py",
+        "core/answer_synthesis_contracts.py",
+        "core/answer_synthesis_draft_verifier.py",
+        "core/answer_synthesis_renderer.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_ollama.py",
+        "core/answer_synthesis_release.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_batched_reviewer.py",
+      "SYMBOLS": [
+        "BatchedNarrativeReviewer"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_budget.py",
+        "core/answer_synthesis_review_batches.py",
+        "core/answer_synthesis_semantic.py",
+        "core/answer_synthesis_usage.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_narrative_workflow.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_budget.py",
+      "SYMBOLS": [
+        "NarrativeTimeBudget"
+      ],
+      "DEPENDENCIES": [],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_narrative_workflow.py",
+        "core/answer_synthesis_batched_reviewer.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_narrative_ollama.py",
+      "SYMBOLS": [
+        "GeneratedNarrative",
+        "reviewed_narrative_chunks",
+        "LocalQwenNarrativeGenerator"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_narrative.py",
+        "core/answer_synthesis_narrative_strategy.py",
+        "core/answer_synthesis_reference_transport.py",
+        "core/answer_synthesis_semantic.py",
+        "core/answer_synthesis_usage.py",
+        "llm/adapters/ollama_provider.py",
+        "llm/providers/provider_config.py",
+        "llm/providers/provider_guard.py",
+        "llm/providers/provider_models.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_narrative_workflow.py",
+        "core/answer_synthesis_deepseek.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_semantic.py",
+      "SYMBOLS": [
+        "EntailmentVerdict",
+        "SemanticClaimReview",
+        "SemanticReview",
+        "semantic_input_digest",
+        "EvidenceEntailmentReviewer",
+        "validate_semantic_review",
+        "validate_grounded_answer_review"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_analysis.py",
+        "core/answer_synthesis_contracts.py",
+        "core/answer_synthesis_draft_verifier.py",
+        "core/answer_synthesis_narrative.py",
+        "core/answer_synthesis_renderer.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_narrative_workflow.py",
+        "core/answer_synthesis_semantic_ollama.py",
+        "core/answer_synthesis_batched_reviewer.py",
+        "core/answer_synthesis_narrative_ollama.py",
+        "core/answer_synthesis_narrative.py",
+        "core/answer_synthesis_review_batches.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_usage.py",
+      "SYMBOLS": [
+        "FailedCompletionUsage",
+        "AccountedCompletionFailure",
+        "ProviderPreflightFailure",
+        "ReviewBatchPreflightFailure"
+      ],
+      "DEPENDENCIES": [],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_narrative_workflow.py",
+        "core/answer_synthesis_deepseek.py",
+        "core/answer_synthesis_batched_reviewer.py",
+        "core/answer_synthesis_narrative_ollama.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_contracts.py",
+      "SYMBOLS": [
+        "AnswerType",
+        "ClaimType",
+        "CausalStrength",
+        "RelationType",
+        "VerificationFailure",
+        "_freeze",
+        "EvidenceSnapshot",
+        "SynthesisInput",
+        "adapt_retrieval_result",
+        "legacy_evidence_id",
+        "adapt_legacy_evidence",
+        "GroundedClaim",
+        "ClaimEdge",
+        "AnswerPlan",
+        "VerificationResult",
+        "RevisionPolicy",
+        "ResponseSynthesizer",
+        "AnswerPlanner",
+        "AnswerVerifier"
+      ],
+      "DEPENDENCIES": [
+        "agent/reasoning_models.py",
+        "retrieval/adaptive_contract.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_semantic_ollama.py",
+        "core/answer_synthesis_release.py",
+        "core/answer_synthesis_draft_verifier.py",
+        "core/answer_synthesis_workflow.py",
+        "core/answer_synthesis_semantic.py",
+        "core/answer_synthesis_narrative_strategy.py",
+        "core/answer_synthesis_reference_transport.py",
+        "core/answer_synthesis_analysis.py",
+        "core/answer_synthesis_renderer.py",
+        "core/answer_synthesis_narrative.py",
+        "core/answer_synthesis_review_batches.py",
+        "core/answer_synthesis_planner.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_narrative_strategy.py",
+      "SYMBOLS": [
+        "build_narrative_payload",
+        "build_narrative_prompt",
+        "parse_narrative_json"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_contracts.py",
+        "core/answer_synthesis_reference_transport.py",
+        "core/narrative_subject_binding.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_semantic_ollama.py",
+        "core/answer_synthesis_deepseek.py",
+        "core/answer_synthesis_narrative_ollama.py",
+        "core/answer_synthesis_reference_transport.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_reference_transport.py",
+      "SYMBOLS": [
+        "_encode_draft",
+        "_restore_draft",
+        "CompactEvidenceReferences"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_contracts.py",
+        "core/answer_synthesis_narrative_strategy.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_semantic_ollama.py",
+        "core/answer_synthesis_deepseek.py",
+        "core/answer_synthesis_narrative_ollama.py",
+        "core/answer_synthesis_narrative_strategy.py",
+        "core/answer_synthesis_review_batches.py"
+      ]
+    },
+    {
+      "PATH": "core/narrative_subject_binding.py",
+      "SYMBOLS": [
+        "NarrativeSubjectBinding",
+        "subject_binding"
+      ],
+      "DEPENDENCIES": [
+        "document_compatibility/narrative_subject_context.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_semantic_ollama.py",
+        "core/answer_synthesis_narrative_strategy.py",
+        "core/answer_synthesis_narrative.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_analysis.py",
+      "SYMBOLS": [
+        "DifferenceAudit",
+        "audited_difference",
+        "AnalyticalAnswer",
+        "AnalyticalAnswerRenderer"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_contracts.py",
+        "core/answer_synthesis_planner.py",
+        "core/answer_synthesis_renderer.py",
+        "core/fact_ledger.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_release.py",
+        "core/answer_synthesis_workflow.py",
+        "core/answer_synthesis_semantic.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_renderer.py",
+      "SYMBOLS": [
+        "company_display_name",
+        "NumericPresentation",
+        "RenderedAnswer",
+        "RestrictedAnswerRenderer",
+        "RestrictedOutputVerifier"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_contracts.py",
+        "core/answer_synthesis_planner.py",
+        "core/fact_ledger.py",
+        "core/financial_metric_registry.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_release.py",
+        "core/answer_synthesis_draft_verifier.py",
+        "core/answer_synthesis_workflow.py",
+        "core/answer_synthesis_semantic.py",
+        "core/answer_synthesis_analysis.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_narrative.py",
+      "SYMBOLS": [
+        "BufferedNarrative",
+        "assemble_narrative",
+        "release_reviewed_narrative"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_contracts.py",
+        "core/answer_synthesis_semantic.py",
+        "core/narrative_subject_binding.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_deepseek.py",
+        "core/answer_synthesis_narrative_ollama.py",
+        "core/answer_synthesis_semantic.py",
+        "core/answer_synthesis_review_batches.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_review_batches.py",
+      "SYMBOLS": [
+        "NarrativeReviewBatch",
+        "plan_narrative_review_batches"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_contracts.py",
+        "core/answer_synthesis_narrative.py",
+        "core/answer_synthesis_reference_transport.py",
+        "core/answer_synthesis_semantic.py",
+        "core/answer_synthesis_semantic_ollama.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_batched_reviewer.py"
+      ]
+    },
+    {
+      "PATH": "document_compatibility/narrative_subject_context.py",
+      "SYMBOLS": [
+        "explicitly_named_subject",
+        "controlling_shareholder_contexts"
+      ],
+      "DEPENDENCIES": [],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/narrative_subject_binding.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_planner.py",
+      "SYMBOLS": [
+        "locked_observation",
+        "DeterministicAnswerPlanner",
+        "DeterministicAnswerVerifier"
+      ],
+      "DEPENDENCIES": [
+        "core/answer_synthesis_contracts.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "ROLE": "ANSWER_CORE",
+      "WHY_REQUIRED": "Transitive import",
+      "USED_BY": [
+        "core/answer_synthesis_analysis.py",
+        "core/answer_synthesis_renderer.py"
+      ]
+    },
+    {
+      "PATH": "core/answer_synthesis_shadow.py",
+      "SYMBOLS": [
+        "ShadowOutcome",
+        "evaluate_structured_shadow"
+      ],
+      "WHY_REQUIRED": "Existing real P1.3 planner regression invokes baseline shadow bridge",
+      "USED_BY": [
+        "tests/test_answer_synthesis_planner.py"
+      ],
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "ROLE": "ANSWER_CORE",
+      "COMMIT_TARGET": "BASELINE_C",
+      "DEPENDENCIES": [
+        "retrieval/adaptive_adapters.py",
+        "retrieval/adaptive_contract.py",
+        "core/answer_synthesis_workflow.py"
+      ]
+    }
+  ],
+  "COMMIT_C_NEW_FILES": [
+    "core/answer_synthesis_ollama.py",
+    "core/answer_synthesis_narrative_workflow.py",
+    "core/answer_synthesis_semantic_ollama.py",
+    "core/answer_synthesis_release.py",
+    "core/answer_synthesis_deepseek.py",
+    "core/answer_synthesis_draft_verifier.py",
+    "core/answer_synthesis_workflow.py",
+    "core/answer_synthesis_batched_reviewer.py",
+    "core/answer_synthesis_budget.py",
+    "core/answer_synthesis_narrative_ollama.py",
+    "core/answer_synthesis_semantic.py",
+    "core/answer_synthesis_usage.py",
+    "core/answer_synthesis_contracts.py",
+    "core/answer_synthesis_narrative_strategy.py",
+    "core/answer_synthesis_reference_transport.py",
+    "core/narrative_subject_binding.py",
+    "core/answer_synthesis_analysis.py",
+    "core/answer_synthesis_renderer.py",
+    "core/answer_synthesis_narrative.py",
+    "core/answer_synthesis_review_batches.py",
+    "document_compatibility/narrative_subject_context.py",
+    "core/answer_synthesis_planner.py",
+    "core/answer_synthesis_shadow.py",
+    "tests/test_answer_synthesis_contracts.py",
+    "tests/test_answer_synthesis_planner.py",
+    "tests/test_answer_synthesis_renderer.py",
+    "tests/test_answer_synthesis_draft_verifier.py",
+    "tests/test_answer_synthesis_analysis.py",
+    "tests/test_answer_synthesis_workflow.py",
+    "tests/test_answer_synthesis_ollama.py",
+    "tests/test_answer_synthesis_narrative.py",
+    "tests/test_answer_synthesis_semantic.py",
+    "tests/test_answer_synthesis_release.py",
+    "tests/test_answer_synthesis_budget.py",
+    "tests/test_narrative_ollama.py",
+    "tests/test_narrative_workflow.py",
+    "tests/test_narrative_strategy.py",
+    "tests/test_semantic_ollama_review.py",
+    "tests/test_synthesis_reference_transport.py",
+    "tests/test_narrative_review_batches.py",
+    "tests/test_batched_narrative_reviewer.py",
+    "tests/test_deepseek_synthesis_ports.py"
+  ],
+  "COMMIT_C_PATCHES": [
+    {
+      "PATH": "llm/providers/provider_models.py",
+      "SYMBOLS": [
+        "ChatRequest.thinking_enabled"
+      ],
+      "ROLE": "PROVIDER_CONTRACT",
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "PURPOSE": "Legacy DeepSeek synthesis request interface; excludes ALL new Generation/Usage changes"
+    },
+    {
+      "PATH": "retrieval/adaptive_contract.py",
+      "SYMBOLS": [
+        "Evidence.section"
+      ],
+      "ROLE": "ANSWER_CORE",
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "PURPOSE": "Lossless legacy evidence bridge; metadata field only, no retrieval behavior"
+    },
+    {
+      "PATH": "llm/adapters/deepseek_provider.py",
+      "SYMBOLS": [
+        "max_api_attempts",
+        "thinking_enabled",
+        "record_usage",
+        "api_attempts metadata"
+      ],
+      "ROLE": "PROVIDER_ADAPTER",
+      "ORIGIN_ESTIMATE": "PRE_PHASE_1B",
+      "COMMIT_TARGET": "BASELINE_C",
+      "PURPOSE": "Existing synthesis normal-path request and attempt metadata; excludes Phase 1B missing-usage and no-timeout-retry changes"
+    }
+  ],
+  "TEST_RESULTS": {
+    "initial": "340 passed / 24 failed (dependencies discovered)",
+    "corrected": "364 passed / 0 failed / 0 skipped",
+    "imports": "PASS",
+    "ruff": "PASS"
+  },
+  "TEMP_C": "D:/financial-rag-test-temp/phase1b-baseline-c-cd56d83a2085497db85ad8f069dc5608",
+  "ALL_BATCH_1_CHANGES_TARGET": "COMMIT_D"
+}

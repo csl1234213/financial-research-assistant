@@ -1,0 +1,217 @@
+name: Production Validation and Release
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements/**/*.txt
+      - name: Install dependencies
+        run: pip install -r requirements/dev.txt
+      - name: Verify release tag matches application version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: >-
+          python -c "import os;
+          from agent.__version__ import BASE_VERSION;
+          assert os.environ['GITHUB_REF_NAME'] == f'v{BASE_VERSION}',
+          f\"tag {os.environ['GITHUB_REF_NAME']} does not match v{BASE_VERSION}\""
+      - name: Run tests
+        run: >-
+          pytest tests/ -m "not e2e and not perf"
+          --ignore=tests/e2e
+          --ignore=tests/benchmark
+          --ignore=tests/execution/test_execution_benchmark.py
+          --ignore=tests/memory/test_memory_benchmark.py
+          --ignore=tests/planning/test_complexity_benchmark.py
+          --no-cov -q
+
+  lint:
+    name: Production lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install ruff
+        run: pip install ruff==0.12.0
+      - name: Lint supported production modules
+        run: >-
+          ruff check api agent auth billing cache config core evaluation llm
+          mcp memory middleware migrations models observability prompts
+          retrieval services storage tasks training workers
+
+  frontend-build:
+    name: React production build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Test frontend API contracts
+        run: npm test
+      - name: Build React frontend
+        run: npm run build
+
+  docker-build:
+    name: Compose image validation
+    needs: [test, lint, frontend-build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare non-secret Compose environment
+        run: cp .env.example .env
+      - name: Validate Docker Compose configuration
+        run: docker compose config --quiet
+      - name: Build API and React images
+        run: docker compose build backend frontend
+
+  docker-push:
+    name: Publish immutable release images when configured
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [docker-build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Docker Hub publication configuration
+        id: registry
+        shell: bash
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          if [[ -n "$DOCKER_USERNAME" && -n "$DOCKER_PASSWORD" ]]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Docker Hub credentials are not configured; skipping registry publication."
+          fi
+      - name: Set up Docker Buildx
+        if: steps.registry.outputs.enabled == 'true'
+        uses: docker/setup-buildx-action@v3
+      - name: Log in to Docker Hub
+        if: steps.registry.outputs.enabled == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Set version tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      - name: Build and push shared backend/worker runtime image
+        if: steps.registry.outputs.enabled == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.api
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/financial-rag-api:${{ steps.version.outputs.VERSION }}
+            ${{ secrets.DOCKER_USERNAME }}/financial-rag-api:latest
+            ${{ secrets.DOCKER_USERNAME }}/financial-rag-worker:${{ steps.version.outputs.VERSION }}
+            ${{ secrets.DOCKER_USERNAME }}/financial-rag-worker:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Build and push React frontend image
+        if: steps.registry.outputs.enabled == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.frontend
+          build-args: VITE_API_BASE_URL=/api
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/financial-rag-frontend:${{ steps.version.outputs.VERSION }}
+            ${{ secrets.DOCKER_USERNAME }}/financial-rag-frontend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  release:
+    name: Publish GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [docker-push]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: release-${{ github.ref_name }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate release metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          base_version="$(python -c \
+            'from agent.__version__ import BASE_VERSION; print(BASE_VERSION)')"
+          expected_tag="v${base_version}"
+          release_title="Financial AI Copilot V${base_version}"
+          release_notes="docs/releases/v${base_version}.md"
+
+          test "$GITHUB_REF_TYPE" = "tag"
+          test "$GITHUB_REF_NAME" = "$expected_tag"
+          test -s "$release_notes"
+          grep -Fq "# ${release_title}" "$release_notes"
+
+      - name: Create GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          base_version="$(python -c \
+            'from agent.__version__ import BASE_VERSION; print(BASE_VERSION)')"
+          release_title="Financial AI Copilot V${base_version}"
+          release_notes="docs/releases/v${base_version}.md"
+
+          if metadata="$(gh release view "$GITHUB_REF_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json name,tagName,isDraft,isPrerelease \
+            --jq '[.name, .tagName, (.isDraft | tostring), (.isPrerelease | tostring)] | @tsv' \
+            2>/dev/null)"; then
+            IFS=$'\t' read -r existing_name existing_tag is_draft is_prerelease \
+              <<< "$metadata"
+
+            test "$existing_name" = "$release_title"
+            test "$existing_tag" = "$GITHUB_REF_NAME"
+            test "$is_draft" = "false"
+            test "$is_prerelease" = "false"
+            echo "Release $GITHUB_REF_NAME already exists with the expected metadata."
+            exit 0
+          fi
+
+          gh release create "$GITHUB_REF_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --title "$release_title" \
+            --notes-file "$release_notes" \
+            --latest

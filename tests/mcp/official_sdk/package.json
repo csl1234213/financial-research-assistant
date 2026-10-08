@@ -1,0 +1,14 @@
+{
+  "name": "financial-agent-mcp-official-sdk-conformance",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline interoperability gate for the Financial Agent MCP stdio server.",
+  "scripts": {
+    "test": "node --test conformance.test.mjs"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "zod": "4.4.3"
+  }
+}

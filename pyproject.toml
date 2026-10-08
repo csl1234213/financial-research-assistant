@@ -1,0 +1,48 @@
+[tool.pytest.ini_options]
+# Coverage is configured explicitly in CI through .coveragerc. Keeping it out
+# of default test runs makes focused local regression checks fast and avoids
+# enforcing a repository-wide coverage gate on ad-hoc developer commands.
+markers = [
+    "unit: Unit tests (fast, isolated)",
+    "integration: Integration tests (module collaboration)",
+    "slow: Slow tests (e2e, benchmark)",
+    "perf: Performance benchmark tests",
+    "e2e: End-to-end tests",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["E402", "E501", "F841", "E741"]
+"ui/*.py" = ["E402"]
+"core/*.py" = ["E402"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.coverage.run]
+omit = [
+    "*/tests/*",
+    "*/__init__.py",
+    "llm/deepseek.py",
+    "llm/provider.py",
+    "app.py",
+    "api_server.py",
+    "client/*",
+    "storage/collection_manager.py",
+    "chroma_db_test*",
+]
+
+[tool.coverage.report]
+exclude_also = [
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "@(abc\\.)?abstractmethod",
+]

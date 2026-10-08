@@ -1,0 +1,296 @@
+# ============================================================
+# Financial RAG Assistant — Production Docker Compose
+# ============================================================
+# Usage:
+#   docker compose up          # foreground
+#   docker compose up -d       # detached
+#   docker compose down        # stop and remove
+#   docker compose build       # rebuild images
+# ============================================================
+# Architecture:
+#   frontend   (port 3000)  — React/Vite + Nginx
+#   backend    (port 8000)  — FastAPI + Agent Runtime
+#   chromadb   (port 8001)  — Vector Database
+#   postgres   (port 5432)  — Relational Database (auth, usage, subscriptions)
+#   redis      (port 6379)  — Cache & Task Queue
+# ============================================================
+
+name: financial-rag-prod
+
+services:
+  # ==========================================================
+  # PostgreSQL — Relational Database
+  # ==========================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: financial-postgres
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-financial}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-financial_rag}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - financial_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-financial} -d ${POSTGRES_DB:-financial_rag}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ==========================================================
+  # Redis — Cache & Task Queue
+  # ==========================================================
+  redis:
+    image: redis:7-alpine
+    container_name: financial-redis
+    command:
+      [
+        "redis-server",
+        "--appendonly",
+        "yes",
+        "--save",
+        "60",
+        "1",
+        "--save",
+        "300",
+        "10",
+        "--requirepass",
+        "${REDIS_PASSWORD:?REDIS_PASSWORD must be set in .env}",
+      ]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD must be set in .env}
+    networks:
+      - financial_network
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" --no-auth-warning ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ==========================================================
+  # ChromaDB — Vector Database
+  # ==========================================================
+  chromadb:
+    image: chromadb/chroma:1.5.9
+    container_name: financial-chromadb
+    ports:
+      - "127.0.0.1:8001:8000"
+    volumes:
+      # Rust single-node image /config.yaml declares persist_path: /data.
+      # Existing deployments must preserve active /data before replacement.
+      - chroma_data:/data
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    networks:
+      - financial_network
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8000; printf 'GET /api/v2/heartbeat HTTP/1.0\r\n\r\n' >&3; grep -q nanosecond <&3"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ==========================================================
+  # FastAPI Backend
+  # ==========================================================
+  backend:
+    image: financial-rag-assistant-runtime:${APP_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: financial-backend
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - uploads_data:/app/storage/uploads
+      - agent_memory:/app/storage/memory
+      - logs_data:/app/logs
+      - huggingface_cache:/home/appuser/.cache/huggingface
+    environment:
+      - APP_ENV=production
+      - AUTH_SECRET_KEY=${AUTH_SECRET_KEY:?AUTH_SECRET_KEY is required in .env}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - LLM_TIMEOUT=${LLM_TIMEOUT:-60}
+      - LLM_CONNECT_TIMEOUT=${LLM_CONNECT_TIMEOUT:-10}
+      - LLM_READ_TIMEOUT=${LLM_READ_TIMEOUT:-45}
+      - LLM_TOTAL_DEADLINE=${LLM_TOTAL_DEADLINE:-120}
+      - LLM_MAX_TOKENS=${LLM_MAX_TOKENS:-4096}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - DOUBAO_API_KEY=${DOUBAO_API_KEY:-}
+      - LLM_CREDENTIAL_ENCRYPTION_KEYS=${LLM_CREDENTIAL_ENCRYPTION_KEYS:-}
+      - LLM_CREDENTIAL_KEY_FILE=/app/storage/memory/.llm-credential-key
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:?REDIS_PASSWORD must be set in .env}
+      - EVALUATION_BYPASS_PLAN_LIMITS=${EVALUATION_BYPASS_PLAN_LIMITS:-false}
+      - EVALUATION_BYPASS_TENANT_IDS=${EVALUATION_BYPASS_TENANT_IDS:-}
+      - CHAT_PLAN_LIMITS_ENABLED=${CHAT_PLAN_LIMITS_ENABLED:-true}
+      - HF_ENDPOINT=${HF_ENDPOINT:-https://huggingface.co}
+      - "SEC_USER_AGENT=${SEC_USER_AGENT:-financial-rag-assistant/8.2 (contact: financial-rag-assistant@example.com)}"
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-intfloat/multilingual-e5-small}
+      - EMBEDDING_MODEL_REVISION=${EMBEDDING_MODEL_REVISION:-614241f622f53c4eeff9890bdc4f31cfecc418b3}
+      - EMBEDDING_DEVICE=${EMBEDDING_DEVICE:-}
+      - EMBEDDING_BATCH_SIZE=${EMBEDDING_BATCH_SIZE:-32}
+      - CHUNK_SIZE=${CHUNK_SIZE:-1000}
+      - CHUNK_OVERLAP=${CHUNK_OVERLAP:-200}
+      - OCR_ENABLED=${OCR_ENABLED:-true}
+      - OCR_LANGUAGES=${OCR_LANGUAGES:-eng+chi_sim}
+      - OCR_DPI=${OCR_DPI:-300}
+      - OCR_MIN_TEXT_CHARS=${OCR_MIN_TEXT_CHARS:-80}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:5173}
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-financial}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}@postgres:5432/${POSTGRES_DB:-financial_rag}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:?REDIS_PASSWORD must be set in .env}@redis:6379/0
+      - AGENT_MEMORY_DIR=/app/storage/memory
+      - TRUST_PROXY_HEADERS=true
+      - RUN_DATABASE_MIGRATIONS=true
+      - P1_3_SMOKE_AUDIT_PATH=${P1_3_SMOKE_AUDIT_PATH:-}
+      - ALLOW_REAL_PROVIDER=${ALLOW_REAL_PROVIDER:-false}
+    depends_on:
+      chromadb:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - financial_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+  # ==========================================================
+  # React/Vite Frontend (Nginx)
+  # ==========================================================
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+      args:
+        VITE_API_BASE_URL: /api
+    container_name: financial-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - financial_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  # ==========================================================
+  # Agent Worker — Async Agent Task Execution
+  # ==========================================================
+  agent-worker:
+    # API and worker share one immutable runtime image. This avoids exporting
+    # duplicate multi-GB ML dependency layers during local and CI builds.
+    image: financial-rag-assistant-runtime:${APP_VERSION:-latest}
+    command: ["python", "-m", "workers.agent_worker"]
+    volumes:
+      - uploads_data:/app/storage/uploads
+      - agent_memory:/app/storage/memory
+      - logs_data:/app/logs
+      - huggingface_cache:/home/appuser/.cache/huggingface
+    environment:
+      - APP_ENV=production
+      - AUTH_SECRET_KEY=${AUTH_SECRET_KEY:?AUTH_SECRET_KEY is required in .env}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - LLM_MAX_TOKENS=${LLM_MAX_TOKENS:-4096}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - DOUBAO_API_KEY=${DOUBAO_API_KEY:-}
+      - LLM_CREDENTIAL_ENCRYPTION_KEYS=${LLM_CREDENTIAL_ENCRYPTION_KEYS:-}
+      - LLM_CREDENTIAL_KEY_FILE=/app/storage/memory/.llm-credential-key
+      - ALLOW_REAL_PROVIDER=${ALLOW_REAL_PROVIDER:-false}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:?REDIS_PASSWORD must be set in .env}
+      - EVALUATION_BYPASS_PLAN_LIMITS=${EVALUATION_BYPASS_PLAN_LIMITS:-false}
+      - EVALUATION_BYPASS_TENANT_IDS=${EVALUATION_BYPASS_TENANT_IDS:-}
+      - CHAT_PLAN_LIMITS_ENABLED=${CHAT_PLAN_LIMITS_ENABLED:-true}
+      - HF_ENDPOINT=${HF_ENDPOINT:-https://huggingface.co}
+      - "SEC_USER_AGENT=${SEC_USER_AGENT:-financial-rag-assistant/8.2 (contact: financial-rag-assistant@example.com)}"
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-intfloat/multilingual-e5-small}
+      - EMBEDDING_MODEL_REVISION=${EMBEDDING_MODEL_REVISION:-614241f622f53c4eeff9890bdc4f31cfecc418b3}
+      - EMBEDDING_DEVICE=${EMBEDDING_DEVICE:-}
+      - EMBEDDING_BATCH_SIZE=${EMBEDDING_BATCH_SIZE:-32}
+      - CHUNK_SIZE=${CHUNK_SIZE:-1000}
+      - CHUNK_OVERLAP=${CHUNK_OVERLAP:-200}
+      - OCR_ENABLED=${OCR_ENABLED:-true}
+      - OCR_LANGUAGES=${OCR_LANGUAGES:-eng+chi_sim}
+      - OCR_DPI=${OCR_DPI:-300}
+      - OCR_MIN_TEXT_CHARS=${OCR_MIN_TEXT_CHARS:-80}
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-financial}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}@postgres:5432/${POSTGRES_DB:-financial_rag}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:?REDIS_PASSWORD must be set in .env}@redis:6379/0
+      - AGENT_MEMORY_DIR=/app/storage/memory
+      - WORKER_CONCURRENCY=${WORKER_CONCURRENCY:-2}
+      - WORKER_POLL_TIMEOUT=${WORKER_POLL_TIMEOUT:-1.0}
+      - MAX_TASK_RUNTIME=${MAX_TASK_RUNTIME:-3600}
+      - RUN_DATABASE_MIGRATIONS=false
+    depends_on:
+      backend:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - financial_network
+    healthcheck:
+      test: ["CMD", "python", "-m", "workers.agent_worker", "--healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+volumes:
+  chroma_data:
+    name: financial_chroma_prod
+  uploads_data:
+    name: financial_uploads
+  logs_data:
+    name: financial_logs
+  postgres_data:
+    name: financial_postgres_data
+  redis_data:
+    name: financial_redis_data
+  agent_memory:
+    name: financial_agent_memory
+  huggingface_cache:
+    name: financial_huggingface_cache
+
+networks:
+  financial_network:
+    driver: bridge
+    name: financial_network

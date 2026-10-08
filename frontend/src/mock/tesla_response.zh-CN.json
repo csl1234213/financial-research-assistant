@@ -1,0 +1,42 @@
+{
+  "report": "特斯拉最新季度文件显示，汽车业务收入仍受到车辆交付量和定价的影响；能源发电与储能业务则继续是重要的增长来源。生产成本和平均售价对汽车业务毛利率带来压力。以下证据来自本地演示使用的特斯拉文件。",
+  "reasoning": {
+    "intent": "SINGLE_COMPANY",
+    "companies": ["Tesla"],
+    "research_mode": "COMPANY_ANALYSIS",
+    "evidence_count": 2
+  },
+  "plan": {
+    "intent": "single_company",
+    "task_count": 1,
+    "tasks": []
+  },
+  "execution": {
+    "strategy": "rag"
+  },
+  "routing": {
+    "provider": "DeepSeek"
+  },
+  "workflow": {
+    "type": "rag",
+    "status": "completed"
+  },
+  "planning": null,
+  "execution_time": 0.72,
+  "citations": [
+    {
+      "rank": 1,
+      "source": "Tesla_Q2_2025.pdf",
+      "chunk_id": "tesla_q2_2025_14",
+      "similarity": 0.9321,
+      "preview": "汽车业务收入和毛利率反映了该季度的车辆交付量、平均售价和生产成本。"
+    },
+    {
+      "rank": 2,
+      "source": "Tesla_Q2_2025.pdf",
+      "chunk_id": "tesla_q2_2025_27",
+      "similarity": 0.8874,
+      "preview": "随着部署量和 Megapack 需求扩大，能源发电与储能业务收入有所增长。"
+    }
+  ]
+}

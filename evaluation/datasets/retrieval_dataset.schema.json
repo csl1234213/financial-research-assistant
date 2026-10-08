@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://financial-agent.local/schemas/retrieval-dataset-v1.json",
+  "title": "Deterministic Financial RAG Retrieval Dataset",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "dataset_id",
+    "description",
+    "seed",
+    "thresholds",
+    "corpus",
+    "cases"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "dataset_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "thresholds": {
+      "type": "object",
+      "required": [
+        "recall_at_k",
+        "mrr",
+        "ndcg",
+        "citation_source_match",
+        "maximum_tenant_leaks"
+      ],
+      "properties": {
+        "recall_at_k": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "mrr": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "ndcg": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "citation_source_match": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "maximum_tenant_leaks": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "corpus": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "document_id",
+          "chunk_id",
+          "tenant_id",
+          "company",
+          "source_filename",
+          "page",
+          "content"
+        ],
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "chunk_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tenant_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "company": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_filename": {
+            "type": "string",
+            "minLength": 1
+          },
+          "page": {
+            "type": [
+              "integer",
+              "string"
+            ]
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "query",
+          "tenant_id",
+          "top_k",
+          "expected_relevant_ids",
+          "expected_sources"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scenario": {
+            "type": "string",
+            "minLength": 1
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tenant_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "company": {
+            "type": "string",
+            "minLength": 1
+          },
+          "document_ids": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "include_public": {
+            "type": "boolean"
+          },
+          "top_k": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "expected_relevant_ids": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "expected_sources": {
+            "$ref": "#/$defs/stringArray"
+          },
+          "forbidden_chunk_ids": {
+            "$ref": "#/$defs/stringArray"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false
+}

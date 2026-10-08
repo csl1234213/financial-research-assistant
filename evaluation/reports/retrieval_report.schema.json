@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://financial-agent.local/schemas/retrieval-report-v1.json",
+  "title": "Deterministic Financial RAG Retrieval Gate Report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "report_type",
+    "execution_mode",
+    "evaluator_version",
+    "dataset",
+    "assurance_boundary",
+    "thresholds",
+    "summary",
+    "results"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "report_type": {
+      "const": "deterministic_rag_retrieval_gate"
+    },
+    "execution_mode": {
+      "const": "offline_seeded_deterministic"
+    },
+    "evaluator_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dataset": {
+      "type": "object"
+    },
+    "assurance_boundary": {
+      "type": "object"
+    },
+    "thresholds": {
+      "type": "object"
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "total_cases",
+        "passed_cases",
+        "failed_cases",
+        "recall_at_k",
+        "mrr",
+        "ndcg",
+        "citation_source_match",
+        "tenant_leak_count",
+        "gate_score",
+        "checks",
+        "threshold_passed"
+      ],
+      "properties": {
+        "total_cases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed_cases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed_cases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recall_at_k": {
+          "$ref": "#/$defs/percentage"
+        },
+        "mrr": {
+          "$ref": "#/$defs/percentage"
+        },
+        "ndcg": {
+          "$ref": "#/$defs/percentage"
+        },
+        "citation_source_match": {
+          "$ref": "#/$defs/percentage"
+        },
+        "tenant_leak_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gate_score": {
+          "$ref": "#/$defs/percentage"
+        },
+        "checks": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "threshold_passed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "query",
+          "tenant_id",
+          "top_k",
+          "expected",
+          "observed",
+          "metrics",
+          "metric_applicability",
+          "tenant_isolation",
+          "checks",
+          "passed"
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "percentage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    }
+  }
+}

@@ -1,0 +1,34 @@
+[run]
+source =
+    api
+    agent
+    core
+    llm
+    storage
+    config
+omit =
+    tests/*
+    */tests/*
+    frontend/*
+    */frontend/*
+    docs/*
+    */docs/*
+    scripts/*
+    */scripts/*
+
+[report]
+fail_under = 85
+show_missing = True
+omit =
+    tests/*
+    */tests/*
+    frontend/*
+    */frontend/*
+    docs/*
+    */docs/*
+    scripts/*
+    */scripts/*
+exclude_also =
+    if __name__ == .__main__.:
+    raise NotImplementedError
+    @(abc\.)?abstractmethod

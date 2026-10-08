@@ -1,0 +1,38 @@
+name: financial-rag-prod
+
+# Ubuntu/Docker Engine overlay. The default compose file remains the local
+# production stack; this overlay adds the only public entry point (Caddy).
+services:
+  frontend:
+    ports: []
+
+  caddy:
+    image: caddy:2.10-alpine
+    container_name: financial-caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:?PUBLIC_DOMAIN must be set for Linux deployment}
+      ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL must be set for Linux deployment}
+    depends_on:
+      frontend:
+        condition: service_healthy
+    networks:
+      - financial_network
+    healthcheck:
+      test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+    name: financial_caddy_data
+  caddy_config:
+    name: financial_caddy_config

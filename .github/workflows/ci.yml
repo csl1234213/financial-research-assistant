@@ -1,0 +1,217 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install ruff
+        run: pip install ruff==0.12.0
+      - name: Lint
+        run: >-
+          ruff check api agent auth billing cache config core evaluation llm
+          mcp memory middleware migrations models observability prompts
+          retrieval services storage tasks training workers
+
+  unit:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements/**/*.txt
+      - name: Install dependencies
+        run: pip install -r requirements/dev.txt
+      - name: Unit tests
+        run: >-
+          pytest tests/ -m unit
+          --ignore=tests/e2e
+          --ignore=tests/benchmark
+          --ignore=tests/execution/test_execution_benchmark.py
+          --ignore=tests/memory/test_memory_benchmark.py
+          --ignore=tests/planning/test_complexity_benchmark.py
+          --no-cov -q
+
+  integration:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements/**/*.txt
+      - name: Install dependencies
+        run: pip install -r requirements/dev.txt
+      - name: Integration tests
+        run: >-
+          pytest tests/ -m integration
+          --ignore=tests/e2e
+          --ignore=tests/benchmark
+          --ignore=tests/execution/test_execution_benchmark.py
+          --ignore=tests/memory/test_memory_benchmark.py
+          --ignore=tests/planning/test_complexity_benchmark.py
+          --no-cov -q
+
+  coverage:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements/**/*.txt
+      - name: Install dependencies
+        run: pip install -r requirements/dev.txt
+      - name: Coverage
+        run: >-
+          pytest tests/ -m "not e2e and not perf"
+          --ignore=tests/e2e
+          --ignore=tests/benchmark
+          --ignore=tests/execution/test_execution_benchmark.py
+          --ignore=tests/memory/test_memory_benchmark.py
+          --ignore=tests/planning/test_complexity_benchmark.py
+          --cov --cov-config=.coveragerc --cov-report=term-missing
+          --cov-fail-under=85 -q
+
+  evaluation-contract:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements/**/*.txt
+      - name: Install dependencies
+        run: pip install -r requirements/dev.txt
+      - name: Validate deterministic evaluation contracts
+        run: pytest tests/evaluation tests/test_langgraph_agent.py tests/test_prompt_registry.py -q --no-cov
+      - name: Run offline golden planning evaluation
+        run: >-
+          python -m evaluation
+          --dataset evaluation/datasets/financial_golden_v1.json
+          --report artifacts/evaluation/offline-golden-report.json
+          --threshold 100
+      - name: Upload offline evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-golden-evaluation
+          path: artifacts/evaluation/offline-golden-report.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Run deterministic RAG retrieval gate
+        run: >-
+          python -m evaluation.retrieval_gate
+          --dataset evaluation/datasets/financial_retrieval_v1.json
+          --report artifacts/evaluation/retrieval-gate-report.json
+          --threshold 100
+      - name: Upload deterministic RAG retrieval report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deterministic-rag-retrieval-evaluation
+          path: artifacts/evaluation/retrieval-gate-report.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  mcp-official-sdk-conformance:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements/**/*.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: tests/mcp/official_sdk/package-lock.json
+      - name: Install MCP server runtime
+        run: pip install -r requirements/api.txt
+      - name: Install pinned official MCP SDK harness
+        run: npm ci --ignore-scripts --prefix tests/mcp/official_sdk
+      - name: Verify official SDK stdio interoperability and governance
+        env:
+          MCP_CONFORMANCE_PYTHON: python
+        run: npm test --prefix tests/mcp/official_sdk
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Test frontend API contracts
+        run: npm test
+      - name: Build frontend
+        run: npm run build
+
+  docker-compose-build:
+    needs:
+      - unit
+      - integration
+      - coverage
+      - evaluation-contract
+      - mcp-official-sdk-conformance
+      - frontend-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare Compose environment
+        run: cp .env.example .env
+      - name: Validate Docker Compose configuration
+        run: docker compose config --quiet
+      - name: Build shared API/worker runtime and React UI images
+        run: docker compose build backend frontend
+      - name: Smoke-test backend image imports
+        run: >-
+          docker compose run --rm --no-deps --entrypoint python backend
+          -c "from agent.__version__ import __version__;
+          from api.schemas.request import ChatRequest;
+          assert __version__ and ChatRequest(question='smoke').question == 'smoke'"
+      - name: Smoke-test agent worker image imports
+        run: >-
+          docker compose run --rm --no-deps --entrypoint python agent-worker
+          -c "import workers.agent_worker"

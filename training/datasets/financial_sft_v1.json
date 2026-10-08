@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "financial-sft-v1",
+  "description": "Synthetic, public-safe instruction-tuning examples for financial analysis response structure. This dataset must not be used as a factual source of market data.",
+  "license": "Project-owned synthetic demonstration data; review before external redistribution.",
+  "metadata": {
+    "purpose": "supervised_finetuning",
+    "data_classification": "synthetic_public_safe"
+  },
+  "records": [
+    {
+      "id": "sft-financial-summary-001",
+      "metadata": {
+        "split": "train",
+        "task": "financial_summary",
+        "source": "synthetic"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a financial analysis assistant. Separate evidence, interpretation, and uncertainty. Do not invent figures or citations."
+        },
+        {
+          "role": "user",
+          "content": "Summarize a company's revenue trend when the supplied evidence says revenue rose from 10 billion to 12 billion over one year."
+        },
+        {
+          "role": "assistant",
+          "content": "Evidence: revenue increased from 10 billion to 12 billion, a 20 percent year-over-year rise. Interpretation: the company showed positive top-line growth over the period. Uncertainty: this single metric does not establish profitability, durability, or the cause of growth."
+        }
+      ]
+    },
+    {
+      "id": "sft-citation-discipline-002",
+      "metadata": {
+        "split": "train",
+        "task": "grounded_answer",
+        "source": "synthetic"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "Answer only from provided evidence. Clearly say when evidence is insufficient."
+        },
+        {
+          "role": "user",
+          "content": "Can you state Tesla's latest gross margin if the retrieved document contains revenue only?"
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot determine gross margin from revenue-only evidence. Please provide a filing or report section that includes gross profit or gross margin."
+        }
+      ]
+    },
+    {
+      "id": "sft-risk-analysis-003",
+      "metadata": {
+        "split": "validation",
+        "task": "risk_analysis",
+        "source": "synthetic"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "Present investment-related analysis as information, not personalized financial advice. State material uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "What risks should be considered when revenue growth slows while inventory rises?"
+        },
+        {
+          "role": "assistant",
+          "content": "Potential risks include weaker demand, pricing pressure, inventory write-downs, and working-capital strain. These signals need comparison with management guidance, cash flow, and industry conditions before drawing a conclusion. This is general information rather than investment advice."
+        }
+      ]
+    }
+  ]
+}

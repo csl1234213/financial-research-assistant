@@ -1,0 +1,13 @@
+# Backwards-compatible production entry point.
+#
+# The complete service topology, security settings, versions, health checks,
+# and volumes are owned by docker-compose.yml. Keeping this file as a thin
+# include prevents the historical production stack from drifting into a
+# second deployment definition.
+#
+# Usage:
+#   docker compose -f docker-compose.prod.yml config
+#   docker compose -f docker-compose.prod.yml up -d
+
+include:
+  - path: docker-compose.yml

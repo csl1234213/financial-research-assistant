@@ -1,0 +1,25 @@
+{
+  "name": "financial-agent-runtime-assistant",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "test": "node --test --experimental-strip-types tests/chat-contract.test.ts tests/settings-contract.test.ts tests/knowledge-contract.test.ts tests/chat-scroll.test.ts tests/auth-contract.test.ts tests/health-contract.test.ts tests/document-retrieval-contract.test.ts tests/resumable-upload-contract.test.ts",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@uppy/core": "6.2.0",
+    "@uppy/tus": "6.0.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "6.0.3",
+    "typescript": "^5.9.2",
+    "vite": "8.1.5"
+  }
+}

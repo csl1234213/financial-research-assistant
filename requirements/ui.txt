@@ -1,0 +1,4 @@
+# Historical Streamlit client dependencies. The UI calls the API and does not
+# need the embedding/RAG runtime installed in its image.
+requests==2.34.2
+streamlit==1.58.0

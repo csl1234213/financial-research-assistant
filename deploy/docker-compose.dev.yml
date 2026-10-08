@@ -1,0 +1,28 @@
+# ============================================================
+# Development Compose — hot-reload, volume mounts, debug mode
+# ============================================================
+# Usage:
+#   docker compose -f deploy/docker-compose.base.yml -f deploy/docker-compose.dev.yml up
+# ============================================================
+name: financial-rag-dev
+
+services:
+  financial-api:
+    env_file:
+      - .env.dev
+    volumes:
+      - ..:/app
+      - financial_uploads:/app/storage/uploads
+      - financial_chroma:/app/chroma_db
+      - financial_logs:/app/logs
+      - ${USERPROFILE}/.cache/huggingface:/home/appuser/.cache/huggingface
+    restart: unless-stopped
+
+  financial-ui:
+    env_file:
+      - .env.dev
+    volumes:
+      - ../ui:/app/ui
+      - ../client:/app/client
+      - financial_uploads:/app/storage/uploads:ro
+    restart: unless-stopped

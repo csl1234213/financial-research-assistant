@@ -1,0 +1,5 @@
+# Exact synthetic fixtures independently audited in security tests. No rule/path-wide exemptions.
+# Isolated in-memory SQLite/TestClient default-provider confidentiality test.
+tests/security/test_llm_settings_security.py:generic-api-key:390
+# Pure Fernet rotation round-trip and old-key rejection test.
+tests/security/test_llm_settings_security.py:generic-api-key:575

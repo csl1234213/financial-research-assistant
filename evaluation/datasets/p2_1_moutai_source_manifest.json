@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "document": "贵州茅台2025年度报告",
+  "source_url": "https://static.cninfo.com.cn/finalpage/2026-04-17/1225114741.PDF",
+  "sha256": "474905deeaf0f875fc0a1b097a626c0c7852c427faadc5d7fc7816cbf45ea288",
+  "page_count": 143,
+  "nonempty_native_text_pages": 143,
+  "download_location": "D:/financial-rag-test-temp/p2_1-corpus/moutai-2025-full.pdf",
+  "reviewed_page_anchors": [
+    {"page": 8, "class": "EXACT_PHRASE", "span": "公司产品通过直销和批发代理渠道进行销售"},
+    {"page": 21, "class": "SECTION_LOOKUP", "span": "行业格局与趋势"},
+    {"page": 23, "class": "EXHAUSTIVE", "span": "一是宏观经济风险；二是安全风险；三是舆情风险；四是环境保护风险。"},
+    {"page": 23, "class": "LOCAL_SEMANTIC", "span": "有序推进茅台酒“十四五”产能扩建"}
+  ],
+  "notes": "Reviewed against downloaded native page text. These are page anchors, not yet canonical-block benchmark gold. Compatibility quality gate must pass before tree construction."
+}

@@ -1,0 +1,91 @@
+{
+  "source": "formal_20260914_p0_quality_sprint1_1_final",
+  "cases": [
+    {
+      "id": "ZH-013",
+      "question": "总结苹果公司 2026 年第二季度的财务表现。",
+      "evidence": [
+        {
+          "source": "Apple_Q2_2026.pdf",
+          "company": "Apple",
+          "chunk_id": "p1_4_apple_q2_summary",
+          "quarter": "Q2_FY2026",
+          "page": 5,
+          "content": "Apple Q2 FY2026 net sales were $111,184 million versus $95,359 million; net income was $29,578 million versus $24,780 million; diluted EPS was $2.01. Services net sales were $30,976 million. Six-month operating cash flow was $82,627 million."
+        }
+      ]
+    },
+    {
+      "id": "EN-016",
+      "question": "What does Apple report about cash flow in Q2 2026?",
+      "evidence": [
+        {
+          "source": "Apple_Q2_2026.pdf",
+          "company": "Apple",
+          "chunk_id": "p1_4_apple_q2_cash_flow",
+          "quarter": "Q2_FY2026",
+          "page": 5,
+          "content": "Apple Q2 FY2026 six-month operating cash flow was $82,627 million. Cash paid for income taxes, net was $20,397 million. These are distinct metrics."
+        }
+      ]
+    },
+    {
+      "id": "EN-019",
+      "question": "Compare Tesla and NVIDIA revenue performance.",
+      "evidence": [
+        {
+          "source": "Tesla_Q2_2025.pdf",
+          "company": "Tesla",
+          "chunk_id": "p1_4_tesla_q2_revenue",
+          "quarter": "Q2_2025",
+          "page": 4,
+          "content": "Tesla Q2 2025 total revenue was $22,496 million. The filing is a Q4/FY2025 update containing the historical Q2 column."
+        },
+        {
+          "source": "NVIDIA_Q1_FY2027.pdf",
+          "company": "NVIDIA",
+          "chunk_id": "p1_4_nvidia_q1_revenue",
+          "quarter": "Q1_FY2027",
+          "page": 1,
+          "content": "NVIDIA Q1 FY2027 revenue was $81.6 billion, and Data Center revenue was $75.2 billion."
+        }
+      ]
+    },
+    {
+      "id": "ZH-019",
+      "question": "比较特斯拉和英伟达的营收表现。",
+      "evidence": [
+        {
+          "source": "Tesla_Q2_2025.pdf",
+          "company": "Tesla",
+          "chunk_id": "p1_4_tesla_q2_revenue_zh",
+          "quarter": "Q2_2025",
+          "page": 4,
+          "content": "特斯拉 Q2 2025 总营收为 $22,496 million；该文件是包含 Q2 历史列的 Q4/FY2025 更新。"
+        },
+        {
+          "source": "NVIDIA_Q1_FY2027.pdf",
+          "company": "NVIDIA",
+          "chunk_id": "p1_4_nvidia_q1_revenue_zh",
+          "quarter": "Q1_FY2027",
+          "page": 1,
+          "content": "英伟达 2027 财年第一季度营收为 $81.6 billion，数据中心营收为 $75.2 billion。"
+        }
+      ]
+    },
+    {
+      "id": "ZH-008",
+      "question": "英伟达 2027 财年第一季度的数据中心业务表现如何？",
+      "evidence": [
+        {
+          "source": "NVIDIA_Q1_FY2027.pdf",
+          "company": "NVIDIA",
+          "chunk_id": "p1_4_nvidia_datacenter",
+          "quarter": "Q1_FY2027",
+          "page": 1,
+          "content": "NVIDIA 2027 财年第一季度数据中心营收为 $75.2 billion，同比增长 92%；同期总营收为 $81.6 billion。"
+        }
+      ]
+    }
+  ]
+}

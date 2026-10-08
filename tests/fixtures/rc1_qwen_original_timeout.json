@@ -1,0 +1,20 @@
+{
+  "query": "说明贵州茅台的主要业务",
+  "retrieval_route": "HYBRID",
+  "provider": "ollama",
+  "model": "srchmnmichael/Qwen3.8-Uncensored:Q4_K_M",
+  "endpoint_category": "LOCAL_NATIVE_CHAT",
+  "request_mode": "NON_STREAM",
+  "source_sha256": "474905deeaf0f875fc0a1b097a626c0c7852c427faadc5d7fc7816cbf45ea288",
+  "evidence_pages": [8, 50, 121, 126, 120],
+  "generation_payload_utf8_bytes": 12040,
+  "context_length": 8192,
+  "max_output_tokens": 1024,
+  "read_timeout_seconds": 120,
+  "retry_count": 0,
+  "sdk_exception_type": "ReadTimeout",
+  "expected_exception_type": "ProviderTimeoutError",
+  "failure_class": "TIMEOUT",
+  "generation_status": "NO_RESPONSE",
+  "usage_status": "UNKNOWN"
+}

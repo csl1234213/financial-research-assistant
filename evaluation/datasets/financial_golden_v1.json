@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "financial-agent-golden-v1",
+  "description": "Versioned planning contracts plus live-only expectations for the public financial demo knowledge base.",
+  "metadata": {
+    "language": "en",
+    "knowledge_scope": "public",
+    "owner": "ai-platform",
+    "offline_scope": "intent, task, workflow, strategy, and tool-selection contracts",
+    "live_scope": "retrieval, citations, grounded answer quality, and model behavior"
+  },
+  "cases": [
+    {
+      "id": "direct-chat-ai-definition",
+      "question": "What is AI?",
+      "expected_intent": "DIRECT_CHAT",
+      "expected_companies": [],
+      "expected_task_type": "chat",
+      "expected_workflow": "direct_chat",
+      "expected_strategy": "direct_llm",
+      "expected_tools": [],
+      "expected_use_retrieval": false,
+      "expected_use_tools": false,
+      "metadata": {
+        "scenario": "direct_chat",
+        "offline_answer_evaluation": false
+      }
+    },
+    {
+      "id": "tesla-revenue-growth",
+      "question": "Analyze Tesla revenue growth.",
+      "expected_intent": "SINGLE_COMPANY",
+      "expected_companies": ["Tesla"],
+      "expected_task_type": "document_qa",
+      "expected_workflow": "rag",
+      "expected_strategy": "rag",
+      "expected_tools": ["retrieval"],
+      "expected_use_retrieval": true,
+      "expected_use_tools": false,
+      "expected_sources": ["Tesla_Q2_2025.pdf"],
+      "expected_retrieval_ids": ["public_tesla_q2_2025_0"],
+      "reference_claims": ["revenue growth"],
+      "criteria": ["revenue growth", "period comparison", "source citation"],
+      "metadata": {
+        "scenario": "single_company_rag"
+      }
+    },
+    {
+      "id": "tesla-nvidia-revenue-comparison",
+      "question": "Compare Tesla and NVIDIA revenue growth.",
+      "expected_intent": "COMPARE_COMPANIES",
+      "expected_companies": ["Tesla", "NVIDIA"],
+      "expected_task_type": "comparison",
+      "expected_workflow": "parallel",
+      "expected_strategy": "parallel",
+      "expected_tools": ["retrieval"],
+      "expected_use_retrieval": true,
+      "expected_use_tools": false,
+      "expected_sources": ["Tesla_Q2_2025.pdf", "NVIDIA_Q2_2025.pdf"],
+      "expected_retrieval_ids": [
+        "public_tesla_q2_2025_0",
+        "public_nvidia_q2_2025_0"
+      ],
+      "reference_claims": ["revenue growth"],
+      "criteria": ["company comparison", "period alignment", "source citations"],
+      "metadata": {
+        "scenario": "company_comparison"
+      }
+    },
+    {
+      "id": "tesla-insufficient-margin-evidence",
+      "question": "What is Tesla gross margin when the supplied evidence only contains revenue?",
+      "expected_intent": "SINGLE_COMPANY",
+      "expected_companies": ["Tesla"],
+      "expected_task_type": "document_qa",
+      "expected_workflow": "rag",
+      "expected_strategy": "rag",
+      "expected_tools": ["retrieval"],
+      "expected_use_retrieval": true,
+      "expected_use_tools": false,
+      "expected_sources": ["Tesla_Q2_2025.pdf"],
+      "criteria": ["state insufficient evidence", "do not infer gross margin"],
+      "metadata": {
+        "scenario": "insufficient_evidence",
+        "expected_answer_policy": "state_insufficient_evidence",
+        "offline_answer_evaluation": false
+      }
+    },
+    {
+      "id": "nvidia-financial-performance",
+      "question": "Analyze NVIDIA financial performance.",
+      "expected_intent": "SINGLE_COMPANY",
+      "expected_companies": ["NVIDIA"],
+      "expected_task_type": "document_qa",
+      "expected_workflow": "rag",
+      "expected_strategy": "rag",
+      "expected_tools": ["retrieval"],
+      "expected_use_retrieval": true,
+      "expected_use_tools": false,
+      "expected_sources": ["NVIDIA_Q2_2025.pdf"],
+      "expected_retrieval_ids": ["public_nvidia_q2_2025_0"],
+      "reference_claims": ["financial performance"],
+      "criteria": ["revenue", "margin", "source citation"],
+      "metadata": {
+        "scenario": "single_company_document_qa",
+        "contract_note": "Broad company financial-performance questions use the governed RAG path; global research remains multi_step."
+      }
+    },
+    {
+      "id": "apple-financial-performance",
+      "question": "Analyze Apple financial performance.",
+      "expected_intent": "SINGLE_COMPANY",
+      "expected_companies": ["Apple"],
+      "expected_task_type": "document_qa",
+      "expected_workflow": "rag",
+      "expected_strategy": "rag",
+      "expected_tools": ["retrieval"],
+      "expected_use_retrieval": true,
+      "expected_use_tools": false,
+      "expected_sources": ["Apple_Q2_2025.pdf"],
+      "expected_retrieval_ids": ["public_apple_q2_2025_0"],
+      "reference_claims": ["financial performance"],
+      "criteria": ["revenue", "cash flow", "source citation"],
+      "metadata": {
+        "scenario": "single_company_document_qa",
+        "contract_note": "Broad company financial-performance questions use the governed RAG path; global research remains multi_step."
+      }
+    }
+  ]
+}

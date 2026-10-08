@@ -1,0 +1,30 @@
+{
+  "evaluation_version": "V8.1.0",
+  "status": "BLOCKED",
+  "language": "en",
+  "environment": {
+    "compose_project": "financial-rag-prod",
+    "api_version": "8.2.0",
+    "health": "200",
+    "ready": "200",
+    "services": "six services healthy"
+  },
+  "completed_cases": 1,
+  "planned_cases": 50,
+  "cases": [
+    {
+      "case_id": "EN01",
+      "question": "Summarize Tesla's financial performance in Q2 2025.",
+      "http_status": 200,
+      "intent": "",
+      "workflow": null,
+      "strategy": null,
+      "companies": [],
+      "citations": [],
+      "answer": "[Provider Configuration Error] AI provider credentials are not configured on the backend.",
+      "judgement": "FAIL",
+      "root_cause": "Provider"
+    }
+  ],
+  "blocker": "LLM provider credentials are not configured on the backend; no grounded answer or citations were returned."
+}

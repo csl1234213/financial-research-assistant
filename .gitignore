@@ -1,0 +1,121 @@
+# =========================
+# Environment
+# =========================
+
+.env
+.env.*
+!.env.example
+
+frontend/.env
+frontend/.env.*
+
+
+# =========================
+# IDE
+# =========================
+
+.idea/
+.vscode/
+
+cache/
+
+
+# =========================
+# Python
+# =========================
+
+__pycache__/
+.pytest_cache/
+*.pyc
+*.egg-info/
+
+
+# =========================
+# Virtual Environment
+# =========================
+
+venv/
+.venv/
+
+
+# =========================
+# Logs / Test Output
+# =========================
+
+test_*.txt
+*.log
+/backup/
+backups/
+*.dump
+*.tar.gz
+/evaluation/results/*
+
+
+# =========================
+# Database
+# =========================
+
+*.sqlite3
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
+
+
+# =========================
+# ChromaDB Vector Database
+# =========================
+
+chroma_db/
+chroma_db_test_*/
+
+
+# =========================
+# Runtime Upload Data
+# =========================
+
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+uploads/
+
+
+# =========================
+# Frontend
+# =========================
+
+node_modules/
+dist/
+
+
+# =========================
+# Coverage
+# =========================
+
+.coverage
+htmlcov/
+
+
+# =========================
+# Regression Outputs
+# =========================
+
+regression_*.txt
+
+
+# =========================
+# Private Interview Notes
+# =========================
+
+/docs/interview/
+
+# Private operator artifacts, never release assets
+*.sqlite
+*.dump
+*.bak
+/backups/
+/snapshots/
+/private/

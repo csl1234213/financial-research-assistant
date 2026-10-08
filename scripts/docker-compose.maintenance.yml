@@ -1,0 +1,48 @@
+# Compose override for one-shot named-volume maintenance.
+#
+# Always combine this file with the canonical repository-root
+# docker-compose.yml. scripts/chroma_volume.py supplies BACKUP_DIR and the
+# operation command; running either service without that wrapper fails closed.
+
+services:
+  chroma-volume-backup:
+    image: alpine:3.21
+    profiles: ["operations"]
+    restart: "no"
+    network_mode: none
+    read_only: true
+    cap_drop: ["ALL"]
+    cap_add: ["DAC_READ_SEARCH"]
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - type: volume
+        source: chroma_data
+        target: /volume
+        read_only: true
+      - type: bind
+        source: ${BACKUP_DIR:?BACKUP_DIR must be an absolute host directory}
+        target: /backup
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["echo 'Use scripts/chroma_volume.py backup' >&2; exit 64"]
+
+  chroma-volume-restore:
+    image: alpine:3.21
+    profiles: ["operations"]
+    restart: "no"
+    network_mode: none
+    read_only: true
+    cap_drop: ["ALL"]
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "FOWNER"]
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - type: volume
+        source: chroma_data
+        target: /volume
+      - type: bind
+        source: ${BACKUP_DIR:?BACKUP_DIR must be an absolute host directory}
+        target: /backup
+        read_only: true
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["echo 'Use scripts/chroma_volume.py restore' >&2; exit 64"]

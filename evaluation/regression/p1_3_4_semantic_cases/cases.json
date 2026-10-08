@@ -1,0 +1,37 @@
+[
+  {
+    "case_id": "ZH-013",
+    "question_source": "evaluation/results/p1_3_3_remaining_9q_smoke/smoke_results.json",
+    "expected": {"scope": "SUMMARY", "company": "Apple", "period": "Q2_2026", "metrics": ["revenue", "net_income", "eps"]},
+    "failure_stage": "CONTEXT",
+    "root_cause": "headline financial table was not present in the final context"
+  },
+  {
+    "case_id": "EN-016",
+    "question_source": "evaluation/results/p1_3_3_remaining_9q_smoke/smoke_results.json",
+    "expected": {"scope": "FACT", "company": "Apple", "period": "Q2_2026", "metrics": ["cash_flow"]},
+    "failure_stage": "CONTEXT",
+    "root_cause": "operating cash-flow row was not present in the final context"
+  },
+  {
+    "case_id": "EN-019",
+    "question_source": "evaluation/results/p1_3_3_remaining_9q_smoke/smoke_results.json",
+    "expected": {"scope": "COMPARE", "companies": ["Tesla", "NVIDIA"], "metrics": ["revenue"]},
+    "failure_stage": "CONTEXT",
+    "root_cause": "comparative table period was not preserved in the selected Tesla evidence"
+  },
+  {
+    "case_id": "ZH-019",
+    "question_source": "evaluation/results/p1_3_3_remaining_9q_smoke/smoke_results.json",
+    "expected": {"scope": "COMPARE", "companies": ["Tesla", "NVIDIA"], "metrics": ["revenue"]},
+    "failure_stage": "CONTEXT",
+    "root_cause": "comparative table period was not preserved in the selected Tesla evidence"
+  },
+  {
+    "case_id": "ZH-008",
+    "question_source": "evaluation/results/p1_3_3_remaining_9q_smoke/smoke_results.json",
+    "expected": {"scope": "FACT", "company": "NVIDIA", "period": "Q1_FY2027", "metrics": ["data_center_revenue", "revenue"]},
+    "failure_stage": "SANITIZER",
+    "root_cause": "Chinese 亿美元 scale was not normalized, causing supported claims to be removed"
+  }
+]
